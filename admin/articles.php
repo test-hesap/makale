@@ -170,7 +170,7 @@ if ($action === 'list') {
     <title><?php echo t('admin_article_management'); ?> - <?php echo t('admin_panel'); ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://cdn.tiny.cloud/1/YOUR_TİNYMCE_API/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="https://cdn.tiny.cloud/1/YOUR_TINYMCE_API_KEY/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
     
     <!-- Form güvenlik kontrolü -->
     <script>

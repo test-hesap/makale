@@ -1399,6 +1399,47 @@ $lang['admin_payment_no_transactions'] = 'Henüz ödeme işlemi bulunmamaktadır
 $lang['admin_payment_details'] = 'Detay';
 $lang['admin_payment_actions'] = 'İşlemler';
 
+// Bakım Modu çevirileri
+$lang['maintenance_mode'] = 'Bakım Modu';
+$lang['maintenance_title'] = 'Site Bakımda';
+$lang['maintenance_message'] = 'Sitemiz şu anda bakım modunda. Kısa süre sonra tekrar hizmetinizde olacağız.';
+$lang['maintenance_countdown'] = 'Geri Sayım';
+$lang['maintenance_settings_saved'] = 'Bakım modu ayarları başarıyla güncellendi!';
+$lang['maintenance_page_title'] = 'Bakım Sayfası Başlığı';
+$lang['maintenance_page_message'] = 'Bakım Sayfası Mesajı';
+$lang['maintenance_end_time'] = 'Bakım Bitiş Zamanı';
+$lang['maintenance_contact_settings'] = 'İletişim Bilgileri';
+$lang['maintenance_contact_email'] = 'İletişim Email Adresi';
+$lang['maintenance_contact_help'] = 'Bakım sayfasındaki "İletişim" butonunda görünecek email adresi';
+$lang['maintenance_quick_time'] = 'Hızlı Zaman Ayarları';
+$lang['maintenance_1_hour'] = '+1 Saat';
+$lang['maintenance_2_hours'] = '+2 Saat';
+$lang['maintenance_6_hours'] = '+6 Saat';
+$lang['maintenance_1_day'] = '+1 Gün';
+$lang['maintenance_save_settings'] = 'Ayarları Kaydet';
+$lang['maintenance_back_to_dashboard'] = 'Dashboard\'a Dön';
+$lang['maintenance_preview'] = 'Önizleme';
+$lang['maintenance_preview_help'] = 'Bakım sayfasının nasıl göründüğünü yeni sekmede görüntüleyebilirsiniz.';
+$lang['maintenance_status_active'] = 'Bakım Modunda';
+$lang['maintenance_status_inactive'] = 'Aktif';
+$lang['maintenance_auto_end_help'] = 'Bu zamana geldiğinde bakım modu otomatik olarak kapanacaktır.';
+$lang['maintenance_mode_help'] = 'Bakım modu aktif olduğunda, sadece admin kullanıcıları siteye erişebilir.';
+$lang['maintenance_countdown_help'] = 'Bakım modunun otomatik olarak biteceği tarih ve saati belirleyin.';
+$lang['maintenance_we_will_be_back'] = 'Yakında Geri Döneceğiz';
+$lang['maintenance_thank_you'] = 'Sabrınız için teşekkür ederiz';
+$lang['maintenance_hours'] = 'Saat';
+$lang['maintenance_minutes'] = 'Dakika';
+$lang['maintenance_seconds'] = 'Saniye';
+$lang['maintenance_days'] = 'Gün';
+$lang['maintenance_check_status'] = 'Durumu Kontrol Et';
+$lang['maintenance_refresh_page'] = 'Sayfayı Yenile';
+$lang['maintenance_checking_status'] = 'Durum kontrol ediliyor';
+$lang['maintenance_ended'] = 'Bakım modu kapandı! Ana sayfaya yönlendiriliyorsunuz';
+$lang['maintenance_still_active'] = 'Bakım modu hala aktif. Lütfen daha sonra tekrar deneyin';
+$lang['maintenance_status_check_failed'] = 'Bakım durumu kontrol edilemedi. Ana sayfayı deneyiniz';
+$lang['maintenance_completed'] = 'Bakım tamamlandı! Ana sayfaya yönlendiriliyorsunuz';
+$lang['maintenance_estimated_end_time'] = 'Tahmini Bitiş Zamanı';
+
 // Abonelik durumları çevirileri
 $lang['admin_subscription_title'] = 'Abonelikler';
 $lang['admin_subscription_status_active'] = 'Aktif';

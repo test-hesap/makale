@@ -11,6 +11,33 @@ $stats = [
     'total_payments' => $db->query("SELECT COALESCE(SUM(amount), 0) FROM payment_transactions WHERE status = 'completed'")->fetchColumn()
 ];
 
+// Bakım modu ayarlarını al
+$maintenance_stmt = $db->prepare("SELECT `key`, value FROM settings WHERE `key` IN ('maintenance_mode', 'maintenance_end_time', 'maintenance_countdown_enabled')");
+$maintenance_stmt->execute();
+$maintenance_settings = [];
+while ($row = $maintenance_stmt->fetch(PDO::FETCH_ASSOC)) {
+    $maintenance_settings[$row['key']] = $row['value'];
+}
+$maintenance_mode = $maintenance_settings['maintenance_mode'] ?? '0';
+$maintenance_end_time = $maintenance_settings['maintenance_end_time'] ?? '';
+$maintenance_countdown_enabled = $maintenance_settings['maintenance_countdown_enabled'] ?? '0';
+
+// Bakım modu ayarlarını al
+$maintenance_settings = [];
+try {
+    $stmt = $db->prepare("SELECT `key`, value FROM settings WHERE `key` IN ('maintenance_mode', 'maintenance_title', 'maintenance_message', 'maintenance_end_time', 'maintenance_countdown_enabled')");
+    $stmt->execute();
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $maintenance_settings[$row['key']] = $row['value'];
+    }
+} catch (Exception $e) {
+    // Hata durumunda boş array kullan
+}
+
+$maintenance_mode = $maintenance_settings['maintenance_mode'] ?? '0';
+$maintenance_end_time = $maintenance_settings['maintenance_end_time'] ?? '';
+$maintenance_countdown_enabled = $maintenance_settings['maintenance_countdown_enabled'] ?? '0';
+
 // Son aktiviteleri al
 $recent_activities = $db->query("
     SELECT a.title, a.created_at, u.username, 'article' as type
@@ -151,6 +178,15 @@ include 'includes/header.php';
                                 <span class="text-center text-sm"><?php echo t('admin_article_ai'); ?></span>
                             </a>
 
+                            <!-- Bakım Modu -->
+                            <a href="maintenance.php" class="flex flex-col items-center justify-center <?php echo $maintenance_mode === '1' ? 'bg-red-600 hover:bg-red-700' : 'bg-orange-600 hover:bg-orange-700'; ?> text-white rounded-lg p-4 transition-colors duration-200">
+                                <i class="fas fa-tools text-2xl mb-2"></i>
+                                <span class="text-center text-sm">Bakım Modu</span>
+                                <?php if ($maintenance_mode === '1'): ?>
+                                    <span class="text-xs mt-1 opacity-80">Aktif</span>
+                                <?php endif; ?>
+                            </a>
+
                             <!-- Ayarlar -->
                             <a href="settings.php" class="flex flex-col items-center justify-center bg-gray-600 hover:bg-gray-700 text-white rounded-lg p-4 transition-colors duration-200">
                                 <i class="fas fa-cogs text-2xl mb-2"></i>
@@ -161,7 +197,7 @@ include 'includes/header.php';
                 </div>
 
                 <!-- İstatistik kartları -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-8">
                     <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
                         <div class="flex items-center">
                             <div class="p-3 rounded-full bg-blue-500 bg-opacity-75">
@@ -221,6 +257,36 @@ include 'includes/header.php';
                                     <?php echo number_format($stats['total_payments'], 2, ',', '.'); ?> ₺
                                 </h4>
                                 <div class="text-gray-500 dark:text-gray-400">Toplam Gelir</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bakım Modu Durumu -->
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full <?php echo $maintenance_mode === '1' ? 'bg-red-500' : 'bg-green-500'; ?> bg-opacity-75">
+                                <i class="fas fa-tools text-white text-2xl"></i>
+                            </div>
+                            <div class="mx-4">
+                                <h4 class="text-lg font-semibold <?php echo $maintenance_mode === '1' ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'; ?>">
+                                    <?php echo $maintenance_mode === '1' ? 'Bakımda' : 'Aktif'; ?>
+                                </h4>
+                                <div class="text-gray-500 dark:text-gray-400">
+                                    <?php if ($maintenance_mode === '1' && $maintenance_countdown_enabled === '1' && !empty($maintenance_end_time)): ?>
+                                        <?php 
+                                        $end_time = new DateTime($maintenance_end_time);
+                                        $now = new DateTime();
+                                        if ($end_time > $now) {
+                                            $diff = $now->diff($end_time);
+                                            echo $diff->format('%h saat %i dk');
+                                        } else {
+                                            echo 'Süre Doldu';
+                                        }
+                                        ?>
+                                    <?php else: ?>
+                                        Site Durumu
+                                    <?php endif; ?>
+                                </div>
                             </div>
                         </div>
                     </div>

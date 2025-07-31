@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Anamakine: 127.0.0.1
--- Üretim Zamanı: 31 Tem 2025, 14:18:11
+-- Üretim Zamanı: 31 Tem 2025, 20:27:25
 -- Sunucu sürümü: 10.4.32-MariaDB
 -- PHP Sürümü: 8.2.12
 
@@ -219,6 +219,19 @@ CREATE TABLE `contacts` (
   `reply` text DEFAULT NULL,
   `reply_date` datetime DEFAULT NULL,
   `created_at` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Tablo için tablo yapısı `maintenance_logs`
+--
+
+CREATE TABLE `maintenance_logs` (
+  `id` int(11) NOT NULL,
+  `action` varchar(100) NOT NULL,
+  `message` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -541,7 +554,15 @@ INSERT INTO `settings` (`id`, `key`, `value`, `created_at`, `cookie_text`, `cook
 (5661, 'iyzico_api_key', '', '2025-07-27 18:00:09', '', '', '', '1', '', '', '', ''),
 (5662, 'iyzico_secret_key', '', '2025-07-27 18:00:09', '', '', '', '1', '', '', '', ''),
 (5663, 'iyzico_base_url', 'https://sandbox-api.iyzipay.com', '2025-07-27 18:00:09', '', '', '', '1', '', '', '', ''),
-(5664, 'payment_methods', '{\"paytr\":{\"active\":0,\"name\":\"PayTR\"},\"iyzico\":{\"active\":1,\"name\":\"iyzico\"}}', '2025-07-27 18:00:09', '', '', '', '1', '', '', '', '');
+(5664, 'payment_methods', '{\"paytr\":{\"active\":0,\"name\":\"PayTR\"},\"iyzico\":{\"active\":1,\"name\":\"iyzico\"}}', '2025-07-27 18:00:09', '', '', '', '1', '', '', '', ''),
+(6238, 'maintenance_mode', '0', '2025-07-31 18:27:19', '', '', '', '1', '', '', '', ''),
+(6239, 'maintenance_title', 'Site Bakımda', '2025-07-31 18:27:19', '', '', '', '1', '', '', '', ''),
+(6240, 'maintenance_message', 'Sitemiz şu anda bakım modunda. Kısa süre sonra tekrar hizmetinizde olacağız.', '2025-07-31 18:27:19', '', '', '', '1', '', '', '', ''),
+(6241, 'maintenance_title_en', 'Site Under Maintenance', '2025-07-31 18:27:19', '', '', '', '1', '', '', '', ''),
+(6242, 'maintenance_message_en', 'Our site is currently under maintenance. We will be back shortly.', '2025-07-31 18:27:19', '', '', '', '1', '', '', '', ''),
+(6243, 'maintenance_end_time', '', '2025-07-31 18:27:19', '', '', '', '1', '', '', '', ''),
+(6244, 'maintenance_countdown_enabled', '1', '2025-07-31 18:27:19', '', '', '', '1', '', '', '', ''),
+(6245, 'maintenance_contact_email', 'info@localhost', '2025-07-31 18:27:19', '', '', '', '1', '', '', '', '');
 
 -- --------------------------------------------------------
 
@@ -779,6 +800,12 @@ ALTER TABLE `contacts`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Tablo için indeksler `maintenance_logs`
+--
+ALTER TABLE `maintenance_logs`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Tablo için indeksler `online_bots`
 --
 ALTER TABLE `online_bots`
@@ -971,6 +998,12 @@ ALTER TABLE `contacts`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
+-- Tablo için AUTO_INCREMENT değeri `maintenance_logs`
+--
+ALTER TABLE `maintenance_logs`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- Tablo için AUTO_INCREMENT değeri `online_bots`
 --
 ALTER TABLE `online_bots`
@@ -1016,7 +1049,7 @@ ALTER TABLE `refund_requests`
 -- Tablo için AUTO_INCREMENT değeri `settings`
 --
 ALTER TABLE `settings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6238;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6246;
 
 --
 -- Tablo için AUTO_INCREMENT değeri `subscriptions`
