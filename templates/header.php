@@ -1343,7 +1343,7 @@ if (isset($_SESSION['user_id'])) {
                         </div>
                     <?php else: ?>                        <div class="flex items-center space-x-4">
                             <a href="/<?php echo __('link_login'); ?>" class="text-gray-500 hover:text-gray-700">
-                                <i class="fas fa-sign-in-alt"></i> <?php echo __('login'); ?>
+                                <i class="fas fa-user-circle fa-lg"></i> <?php echo __('login'); ?>
                             </a>
                             <a href="/<?php echo __('link_register'); ?>" class="text-gray-500 hover:text-gray-700">
                                 <i class="fas fa-user-plus"></i> <?php echo __('register'); ?>
@@ -1386,12 +1386,12 @@ if (isset($_SESSION['user_id'])) {
                     <!-- Mobil Giriş/Kayıt Butonu -->
                     <div class="relative inline-block">
                         <button onclick="toggleMobileLoginMenu()" class="text-gray-500 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg text-sm p-2.5 flex items-center mr-2">
-                            <i class="fas fa-user"></i>
+                            <i class="fas fa-user-circle fa-lg"></i>
                         </button>
                         <div id="mobileLoginDropdownMenu" class="hidden absolute right-0 mt-1 w-32 bg-white dark:bg-gray-800 rounded shadow-lg z-50">
                             <div class="py-1">
                                 <a href="/<?php echo __('link_login'); ?>" class="text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 block px-4 py-2 text-sm">
-                                    <i class="fas fa-sign-in-alt mr-1"></i> <?php echo getActiveLang() == 'tr' ? 'Giriş' : 'Login'; ?>
+                                    <i class="fas fa-user-circle fa-lg mr-1"></i> <?php echo getActiveLang() == 'tr' ? 'Giriş' : 'Login'; ?>
                                 </a>
                                 <a href="/<?php echo __('link_register'); ?>" class="text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 block px-4 py-2 text-sm">
                                     <i class="fas fa-user-plus mr-1"></i> <?php echo getActiveLang() == 'tr' ? 'Kayıt Ol' : 'Register'; ?>
@@ -1513,7 +1513,7 @@ if (isset($_SESSION['user_id'])) {
                         </a>
                     <?php else: ?>                        <div class="flex pl-3 pr-4 py-2 space-x-4">
                             <a href="/<?php echo __('link_login'); ?>" class="text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400">
-                                <i class="fas fa-sign-in-alt mr-1"></i> <?php echo __('login'); ?>
+                                <i class="fas fa-user-circle fa-lg mr-1"></i> <?php echo __('login'); ?>
                             </a>
                             <a href="/<?php echo __('link_register'); ?>" class="text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400">
                                 <i class="fas fa-user-plus mr-1"></i> <?php echo __('register'); ?>
