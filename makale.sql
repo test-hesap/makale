@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Anamakine: 127.0.0.1
--- Üretim Zamanı: 29 Tem 2025, 14:47:32
+-- Üretim Zamanı: 31 Tem 2025, 14:18:11
 -- Sunucu sürümü: 10.4.32-MariaDB
 -- PHP Sürümü: 8.2.12
 
@@ -254,11 +254,7 @@ CREATE TABLE `online_guests` (
 --
 
 INSERT INTO `online_guests` (`id`, `guest_id`, `last_activity`, `ip_address`) VALUES
-(563, 'guest_6888beffda526', '2025-07-29 12:31:07', '127.0.0.1'),
-(564, 'guest_6888bf102393a', '2025-07-29 12:31:32', '127.0.0.1'),
-(565, 'guest_6888bf28f272e', '2025-07-29 12:31:36', '127.0.0.1'),
-(566, 'guest_6888bf2ccf0a1', '2025-07-29 12:31:47', '127.0.0.1'),
-(567, 'guest_6888bf37a223c', '2025-07-29 12:32:50', '127.0.0.1');
+(568, 'guest_688b5ef47bbbe', '2025-07-31 12:17:58', '::1');
 
 -- --------------------------------------------------------
 
@@ -629,7 +625,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `full_name`, `email`, `password`, `avatar`, `role`, `is_premium`, `premium_until`, `status`, `can_post`, `approved`, `created_at`, `bio`, `location`, `website`, `twitter`, `facebook`, `instagram`, `linkedin`, `register_date`, `last_login`, `last_ip`, `youtube`, `tiktok`, `github`, `last_activity`, `is_online`) VALUES
-(1, 'admin', 'Bulent', 'admin@local.ben', '$2y$10$WnbR1..mbxR8J0BRwKgcKOWdw4d/yK9BD0duim9Lvsj9cSw6nJzK6', 'default-avatar.jpg', 'admin', 0, NULL, 'active', 0, 0, '2025-06-13 23:31:26', '4', 'dasdas', 'https://example.com', '1', '2', '3', '4', '2025-06-16 23:17:01', '2025-07-29 15:22:14', NULL, '5', '6', '7', '2025-07-29 12:47:31', 1);
+(1, 'admin', 'Bulent', 'admin@local.ben', '$2y$10$2CCnweRZBCjG0mks8Uvyc.8txmBxL3DV8hRQ4iQmKuB0iwCs8BpM2', 'default-avatar.jpg', 'admin', 0, NULL, 'active', 0, 0, '2025-06-13 23:31:26', '4', 'dasdas', 'https://example.com', '1', '2', '3', '4', '2025-06-16 23:17:01', '2025-07-31 15:18:02', NULL, '5', '6', '7', '2025-07-31 12:18:04', 1);
 
 -- --------------------------------------------------------
 
@@ -676,13 +672,6 @@ CREATE TABLE `user_remember_tokens` (
   `expires` datetime NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Tablo döküm verisi `user_remember_tokens`
---
-
-INSERT INTO `user_remember_tokens` (`id`, `user_id`, `token`, `expires`, `created_at`) VALUES
-(19, 1, '3b6c113473f118ac0a5444b922e8fab5fb71819c3f08694c01bf9cc524c6619b', '2025-08-28 15:22:14', '2025-07-29 12:22:14');
 
 -- --------------------------------------------------------
 
@@ -991,7 +980,7 @@ ALTER TABLE `online_bots`
 -- Tablo için AUTO_INCREMENT değeri `online_guests`
 --
 ALTER TABLE `online_guests`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=568;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=569;
 
 --
 -- Tablo için AUTO_INCREMENT değeri `password_resets`
