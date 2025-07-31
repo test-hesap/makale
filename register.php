@@ -25,6 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = __('error_all_fields');
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = __('error_invalid_email');
+    } elseif (!isValidEmailProvider($email)) {
+        $error = __('error_invalid_email_provider');
     } elseif ($password !== $password_confirm) {
         $error = __('error_password_match');
     } elseif (strlen($password) < 6) {
@@ -207,9 +209,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 <div>
                     <label class="block text-gray-700 dark:text-gray-200 mb-2"><?php echo __('email'); ?></label>
-                    <input type="email" name="email" required autocomplete="email"
+                    <input type="email" name="email" id="email" required autocomplete="email"
                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500 dark:bg-[#292929] dark:text-white dark:border-gray-600"
-                           value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>">
+                           value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>"
+                           oninput="validateEmailProvider(this.value)">
+                    <div id="email-error" class="text-red-500 text-sm mt-1 hidden"></div>
                 </div>
                 
                 <div>
@@ -244,5 +248,92 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
         </div>
     </div>
+
+    <script>
+        // Geçerli e-posta sağlayıcıları listesi
+        const validEmailProviders = [
+            'gmail.com', 'googlemail.com',
+            'hotmail.com', 'outlook.com', 'live.com', 'msn.com',
+            'yahoo.com', 'yahoo.co.uk', 'yahoo.fr', 'yahoo.de', 'yahoo.com.tr',
+            'yandex.com', 'yandex.ru', 'yandex.com.tr',
+            'icloud.com', 'me.com', 'mac.com',
+            'aol.com',
+            'protonmail.com', 'pm.me',
+            'tutanota.com',
+            'mail.ru',
+            'mynet.com',
+            'superonline.com',
+            'ttnet.com.tr',
+            'turk.net',
+            'ttmail.com',
+            'n11.com',
+            'gittigidiyor.com'
+        ];
+
+        // Geçerli üst düzey domain uzantıları
+        const validTLDs = [
+            '.com', '.net', '.org', '.edu', '.gov', '.mil',
+            '.co.uk', '.com.tr', '.net.tr', '.org.tr', '.edu.tr',
+            '.de', '.fr', '.it', '.es', '.nl', '.be', '.ch',
+            '.ru', '.ua', '.pl', '.cz', '.sk', '.hu', '.ro',
+            '.bg', '.hr', '.si', '.rs', '.ba', '.mk', '.me',
+            '.ca', '.au', '.nz', '.in', '.jp', '.kr', '.cn',
+            '.hk', '.sg', '.my', '.th', '.ph', '.id', '.vn',
+            '.br', '.ar', '.mx', '.cl', '.co', '.pe', '.ve',
+            '.za', '.eg', '.ma', '.ng', '.ke', '.gh', '.tz',
+            '.info', '.biz', '.name', '.pro', '.mobi', '.tel',
+            '.xyz', '.online', '.site', '.website', '.store',
+            '.tech', '.space', '.club', '.top', '.world'
+        ];
+
+        function validateEmailProvider(email) {
+            const emailError = document.getElementById('email-error');
+            const emailInput = document.getElementById('email');
+            
+            if (email.trim() === '') {
+                emailError.classList.add('hidden');
+                emailInput.classList.remove('border-red-500');
+                return;
+            }
+            
+            const emailParts = email.split('@');
+            if (emailParts.length !== 2) {
+                emailError.textContent = '<?php echo __('error_invalid_email'); ?>';
+                emailError.classList.remove('hidden');
+                emailInput.classList.add('border-red-500');
+                return;
+            }
+            
+            const domain = emailParts[1].toLowerCase().trim();
+            
+            // Önce bilinen sağlayıcılar listesinde kontrol et
+            if (validEmailProviders.includes(domain)) {
+                emailError.classList.add('hidden');
+                emailInput.classList.remove('border-red-500');
+                return;
+            }
+            
+            // Domain'in geçerli bir TLD ile bitip bitmediğini kontrol et
+            let isValidTLD = false;
+            for (let tld of validTLDs) {
+                if (domain.endsWith(tld)) {
+                    const domainWithoutTLD = domain.substring(0, domain.length - tld.length);
+                    if (domainWithoutTLD.length >= 1 && /^[a-z0-9\-\.]+$/.test(domainWithoutTLD)) {
+                        isValidTLD = true;
+                        break;
+                    }
+                }
+            }
+            
+            if (!isValidTLD) {
+                emailError.textContent = '<?php echo __('error_invalid_email_provider'); ?>';
+                emailError.classList.remove('hidden');
+                emailInput.classList.add('border-red-500');
+            } else {
+                emailError.classList.add('hidden');
+                emailInput.classList.remove('border-red-500');
+            }
+        }
+    </script>
 </body>
 </html>

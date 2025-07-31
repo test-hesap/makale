@@ -1402,3 +1402,96 @@ function isUserBanned($user_id) {
         return false;
     }
 }
+
+/**
+ * E-posta sağlayıcısının geçerli olup olmadığını kontrol eder
+ * @param string $email E-posta adresi
+ * @return bool Geçerli sağlayıcıysa true, değilse false
+ */
+function isValidEmailProvider($email) {
+    // E-posta adresinden domain kısmını al
+    $emailParts = explode('@', $email);
+    if (count($emailParts) !== 2) {
+        return false;
+    }
+    
+    $domain = strtolower(trim($emailParts[1]));
+    
+    // Geçerli üst düzey domain uzantıları
+    $validTLDs = [
+        '.com', '.net', '.org', '.edu', '.gov', '.mil',
+        '.co.uk', '.com.tr', '.net.tr', '.org.tr', '.edu.tr',
+        '.de', '.fr', '.it', '.es', '.nl', '.be', '.ch',
+        '.ru', '.ua', '.pl', '.cz', '.sk', '.hu', '.ro',
+        '.bg', '.hr', '.si', '.rs', '.ba', '.mk', '.me',
+        '.ca', '.au', '.nz', '.in', '.jp', '.kr', '.cn',
+        '.hk', '.sg', '.my', '.th', '.ph', '.id', '.vn',
+        '.br', '.ar', '.mx', '.cl', '.co', '.pe', '.ve',
+        '.za', '.eg', '.ma', '.ng', '.ke', '.gh', '.tz',
+        '.info', '.biz', '.name', '.pro', '.mobi', '.tel',
+        '.xyz', '.online', '.site', '.website', '.store',
+        '.tech', '.space', '.club', '.top', '.world'
+    ];
+    
+    // Geçerli e-posta sağlayıcıları listesi
+    $validProviders = [
+        // Popüler sağlayıcılar
+        'gmail.com', 'googlemail.com',
+        'hotmail.com', 'outlook.com', 'live.com', 'msn.com',
+        'yahoo.com', 'yahoo.co.uk', 'yahoo.fr', 'yahoo.de', 'yahoo.com.tr',
+        'yandex.com', 'yandex.ru', 'yandex.com.tr',
+        'icloud.com', 'me.com', 'mac.com',
+        'aol.com',
+        'protonmail.com', 'pm.me',
+        'tutanota.com',
+        'mail.ru',
+        
+        // Türk sağlayıcıları
+        'mynet.com',
+        'superonline.com',
+        'ttnet.com.tr',
+        'turk.net',
+        'ttmail.com',
+        'n11.com',
+        'gittigidiyor.com',
+        
+        // Diğer uluslararası sağlayıcılar
+        'gmx.com', 'gmx.de',
+        'web.de',
+        'freenet.de',
+        't-online.de',
+        'libero.it',
+        'virgilio.it',
+        'orange.fr',
+        'laposte.net',
+        'free.fr',
+        'wanadoo.fr',
+        'naver.com',
+        'daum.net',
+        'nate.com',
+        'sina.com',
+        'qq.com',
+        '163.com',
+        '126.com',
+        'rediffmail.com',
+        'indiatimes.com'
+    ];
+    
+    // Önce bilinen sağlayıcılar listesinde kontrol et
+    if (in_array($domain, $validProviders)) {
+        return true;
+    }
+    
+    // Domain'in geçerli bir TLD ile bitip bitmediğini kontrol et
+    foreach ($validTLDs as $tld) {
+        if (substr($domain, -strlen($tld)) === $tld) {
+            // Domain en az 3 karakter + TLD uzunluğunda olmalı (örn: a.com minimum)
+            $domainWithoutTLD = substr($domain, 0, -strlen($tld));
+            if (strlen($domainWithoutTLD) >= 1 && preg_match('/^[a-z0-9\-\.]+$/', $domainWithoutTLD)) {
+                return true;
+            }
+        }
+    }
+    
+    return false;
+}
