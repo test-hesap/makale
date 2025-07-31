@@ -349,6 +349,29 @@ $lang = [
     'month_11' => 'Kasım',
     'month_12' => 'Aralık',
     
+    'error_db' => 'Bir hata oluştu: ',
+    
+    // Login ve Register sayfası
+    'username' => 'Kullanıcı Adı',
+    'password' => 'Şifre',
+    'password_confirm' => 'Şifre (Tekrar)',
+    'email' => 'E-posta',
+    'remember_me' => 'Beni Hatırla',
+    'login_button' => 'Giriş Yap',
+    'register_button' => 'Kayıt Ol',
+    'forgot_password' => 'Şifremi Unuttum',
+    'no_account' => 'Hesabınız yok mu?',
+    'have_account' => 'Zaten hesabınız var mı?',
+    'error_all_fields' => 'Lütfen tüm alanları doldurunuz.',
+    'error_invalid_email' => 'Geçerli bir e-posta adresi giriniz.',
+    'error_password_match' => 'Şifreler eşleşmiyor.',
+    'error_password_length' => 'Şifre en az 6 karakter olmalıdır.',
+    'error_username_email_exists' => 'Bu kullanıcı adı veya e-posta adresi zaten kullanılıyor.',
+    'error_invalid_credentials' => 'Geçersiz kullanıcı adı veya şifre.',
+    'error_turnstile' => 'Spam koruması doğrulaması başarısız oldu. Lütfen tekrar deneyiniz.',
+    'success_register' => 'Kayıt başarıyla tamamlandı! Şimdi giriş yapabilirsiniz. Üyeliğiniz onaylandıktan sonra makale ekleyebileceksiniz.',
+    'click_to_login' => 'Giriş yapmak için tıklayın',
+    
     // Sidebar
     'sidebar_categories' => 'Kategoriler',
     'sidebar_online_users' => 'Çevrimiçi Üyeler',

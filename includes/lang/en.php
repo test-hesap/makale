@@ -348,6 +348,27 @@ $lang = [
     // Messages System
     'messages_title' => 'My Messages',
     'messages_inbox' => 'Inbox',
+    
+    // Login and Register page
+    'username' => 'Username',
+    'password' => 'Password',
+    'password_confirm' => 'Confirm Password',
+    'email' => 'Email',
+    'remember_me' => 'Remember Me',
+    'login_button' => 'Login',
+    'register_button' => 'Register',
+    'forgot_password' => 'Forgot Password',
+    'no_account' => 'Don\'t have an account?',
+    'have_account' => 'Already have an account?',
+    'error_all_fields' => 'Please fill in all fields.',
+    'error_invalid_email' => 'Please enter a valid email address.',
+    'error_password_match' => 'Passwords do not match.',
+    'error_password_length' => 'Password must be at least 6 characters.',
+    'error_username_email_exists' => 'This username or email is already in use.',
+    'error_invalid_credentials' => 'Invalid username or password.',
+    'error_turnstile' => 'Spam protection verification failed. Please try again.',
+    'success_register' => 'Registration completed successfully! You can now log in. You will be able to add articles after your membership is approved.',
+    'click_to_login' => 'Click here to login',
     'messages_sent' => 'Sent Messages',
     'messages_sender' => 'Sender',
     'messages_recipient' => 'Recipient',
@@ -403,6 +424,8 @@ $lang = [
     'month_10' => 'October',
     'month_11' => 'November',
     'month_12' => 'December',
+    
+    'error_db' => 'An error occurred: ',
     
     // Sidebar
     'sidebar_categories' => 'Categories',

@@ -902,6 +902,14 @@ if (isset($_SESSION['user_id'])) {
             }
         }
         
+        // Mobil giriş/kayıt menüsünü aç/kapat
+        function toggleMobileLoginMenu() {
+            var menu = document.getElementById('mobileLoginDropdownMenu');
+            if (menu) {
+                menu.classList.toggle('hidden');
+            }
+        }
+        
         // Alt kategoriler için açılır-kapanır menü fonksiyonu
         function initCategoryDropdowns() {
             // Desktop kategoriler için
@@ -1050,6 +1058,15 @@ if (isset($_SESSION['user_id'])) {
                 
                 if (!mobileLangButton && !mobileLangTarget && mobileLangMenu && !mobileLangMenu.classList.contains('hidden')) {
                     mobileLangMenu.classList.add('hidden');
+                }
+                
+                // Mobil giriş/kayıt menüsü için kontrol
+                const mobileLoginMenu = document.getElementById('mobileLoginDropdownMenu');
+                const mobileLoginButton = e.target.closest('button[onclick*="toggleMobileLoginMenu"]');
+                const mobileLoginTarget = e.target.closest('#mobileLoginDropdownMenu');
+                
+                if (!mobileLoginButton && !mobileLoginTarget && mobileLoginMenu && !mobileLoginMenu.classList.contains('hidden')) {
+                    mobileLoginMenu.classList.add('hidden');
                 }
             });
             
@@ -1365,7 +1382,26 @@ if (isset($_SESSION['user_id'])) {
                         </div>
                     </div>
                     
-                      <?php if (isLoggedIn()): ?>                        <a href="/<?php echo __('link_profile'); ?>" class="flex items-center hover:opacity-75 mr-2">
+                    <?php if (!isLoggedIn()): ?>
+                    <!-- Mobil Giriş/Kayıt Butonu -->
+                    <div class="relative inline-block">
+                        <button onclick="toggleMobileLoginMenu()" class="text-gray-500 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg text-sm p-2.5 flex items-center mr-2">
+                            <i class="fas fa-user"></i>
+                        </button>
+                        <div id="mobileLoginDropdownMenu" class="hidden absolute right-0 mt-1 w-32 bg-white dark:bg-gray-800 rounded shadow-lg z-50">
+                            <div class="py-1">
+                                <a href="/<?php echo __('link_login'); ?>" class="text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 block px-4 py-2 text-sm">
+                                    <i class="fas fa-sign-in-alt mr-1"></i> <?php echo getActiveLang() == 'tr' ? 'Giriş' : 'Login'; ?>
+                                </a>
+                                <a href="/<?php echo __('link_register'); ?>" class="text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 block px-4 py-2 text-sm">
+                                    <i class="fas fa-user-plus mr-1"></i> <?php echo getActiveLang() == 'tr' ? 'Kayıt Ol' : 'Register'; ?>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+                    
+                    <?php if (isLoggedIn()): ?>                        <a href="/<?php echo __('link_profile'); ?>" class="flex items-center hover:opacity-75 mr-2">
                             <img src="<?php 
                                 // Kullanıcı avatarını güvenceye al
                                 $avatar = ensureUserAvatar($_SESSION['user_id']);

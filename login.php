@@ -20,14 +20,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'];
     
     if (empty($username) || empty($password)) {
-        $error = 'Lütfen tüm alanları doldurunuz.';
+        $error = __('error_all_fields');
     } else {
         // Turnstile kontrolü
         $turnstileEnabled = isTurnstileEnabled('login');
         if ($turnstileEnabled) {
             $turnstileToken = $_POST['cf-turnstile-response'] ?? '';
             if (!verifyTurnstile($turnstileToken)) {
-                $error = 'Spam koruması doğrulaması başarısız oldu. Lütfen tekrar deneyiniz.';
+                $error = __('error_turnstile');
             }
         }
         
@@ -201,18 +201,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Tüm kullanıcıları ana sayfaya yönlendir
                 header('Location: /');
             } else {
-                $error = 'Geçersiz kullanıcı adı veya şifre.';
+                $error = __('error_invalid_credentials');
             }
         }
     }
 }
 ?>
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="<?php echo getActiveLang(); ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giriş Yap - <?php echo getSetting('site_title'); ?></title>
+    <title><?php echo __('login') . ' - ' . getSetting('site_title'); ?></title>
     <?php include 'templates/header.php'; ?>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -254,7 +254,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="min-h-[80vh] flex items-start justify-center pt-12">
         <div class="max-w-md w-full bg-white dark:bg-gray-700 rounded-lg shadow-lg p-8">
             <div class="mb-8 text-center">
-                <h2 class="text-2xl font-bold dark:text-white">Giriş Yap</h2>
+                <h2 class="text-2xl font-bold dark:text-white"><?php echo __('login'); ?></h2>
                 <p class="text-gray-600 dark:text-gray-300">
                     <?php echo getSetting('site_title'); ?>
                 </p>
@@ -274,13 +274,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             <form method="post" class="space-y-6" autocomplete="off">
                 <div>
-                    <label class="block text-gray-700 dark:text-gray-200 mb-2">Kullanıcı Adı</label>
+                    <label class="block text-gray-700 dark:text-gray-200 mb-2"><?php echo __('username'); ?></label>
                     <input type="text" name="username" required autocomplete="username"
                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500 dark:bg-[#292929] dark:text-white dark:border-gray-600">
                 </div>
                 
                 <div>
-                    <label class="block text-gray-700 dark:text-gray-200 mb-2">Şifre</label>
+                    <label class="block text-gray-700 dark:text-gray-200 mb-2"><?php echo __('password'); ?></label>
                     <input type="password" name="password" required autocomplete="new-password"
                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500 dark:bg-[#292929] dark:text-white dark:border-gray-600">
                 </div>
@@ -288,7 +288,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="flex items-center">
                     <input type="checkbox" id="remember_me" name="remember_me" 
                            class="w-4 h-4 text-blue-500 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600">
-                    <label for="remember_me" class="ml-2 text-sm text-gray-700 dark:text-gray-300">Beni Hatırla</label>
+                    <label for="remember_me" class="ml-2 text-sm text-gray-700 dark:text-gray-300"><?php echo __('remember_me'); ?></label>
                 </div>
                 
                 <?php if (isTurnstileEnabled('login')): ?>
@@ -299,18 +299,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 <button type="submit" 
                         class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-300">
-                    Giriş Yap
+                    <?php echo __('login_button'); ?>
                 </button>
                 
                 <div class="text-center text-gray-600 dark:text-gray-300 mt-4">
                     <a href="forgot_password.php" class="text-blue-500 hover:text-blue-600">
-                        Şifremi Unuttum
+                        <?php echo __('forgot_password'); ?>
                     </a>
                 </div>
                 
                 <div class="text-center text-gray-600 dark:text-gray-300 mt-2">
-                    Hesabınız yok mu? 
-                    <a href="register.php" class="text-blue-500 hover:text-blue-600">Kayıt Ol</a>
+                    <?php echo __('no_account'); ?> 
+                    <a href="register.php" class="text-blue-500 hover:text-blue-600"><?php echo __('register'); ?></a>
                 </div>
             </form>
         </div>

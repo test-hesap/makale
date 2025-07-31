@@ -22,20 +22,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // Doğrulama kontrolleri
     if (empty($username) || empty($email) || empty($password)) {
-        $error = 'Lütfen tüm alanları doldurunuz.';
+        $error = __('error_all_fields');
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $error = 'Geçerli bir e-posta adresi giriniz.';
+        $error = __('error_invalid_email');
     } elseif ($password !== $password_confirm) {
-        $error = 'Şifreler eşleşmiyor.';
+        $error = __('error_password_match');
     } elseif (strlen($password) < 6) {
-        $error = 'Şifre en az 6 karakter olmalıdır.';
+        $error = __('error_password_length');
     } else {
         // Turnstile kontrolü
         $turnstileEnabled = isTurnstileEnabled('register');
         if ($turnstileEnabled) {
             $turnstileToken = $_POST['cf-turnstile-response'] ?? '';
             if (!verifyTurnstile($turnstileToken)) {
-                $error = 'Spam koruması doğrulaması başarısız oldu. Lütfen tekrar deneyiniz.';
+                $error = __('error_turnstile');
             }
         }
         
@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->execute([$username, $email]);
                 
                 if ($stmt->fetchColumn() > 0) {
-                    $error = 'Bu kullanıcı adı veya e-posta adresi zaten kullanılıyor.';
+                    $error = __('error_username_email_exists');
                 } else {                // Yeni kullanıcı oluştur
                     $password_hash = password_hash($password, PASSWORD_DEFAULT);
                     
@@ -104,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ]);
                     
                     if ($stmt->rowCount() > 0) {
-                        $success = 'Kayıt başarıyla tamamlandı! Şimdi giriş yapabilirsiniz. Üyeliğiniz onaylandıktan sonra makale ekleyebileceksiniz.';
+                        $success = __('success_register');
                         
                         // Admin bildirim sistemi için yeni üye bildirimi ekle
                         $user_id = $db->lastInsertId();
@@ -123,12 +123,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                 }
             } catch(PDOException $e) {
-                $error = 'Bir hata oluştu: ' . $e->getMessage();
+                $error = __('error_db') . $e->getMessage();
             }
         }
     }
 }
 ?>
+<!DOCTYPE html>
+<html lang="<?php echo getActiveLang(); ?>">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo __('register') . ' - ' . getSetting('site_title'); ?></title>
 <?php include 'templates/header.php'; ?>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -170,7 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="min-h-[80vh] flex items-start justify-center pt-12">
         <div class="max-w-md w-full bg-white dark:bg-gray-700 rounded-lg shadow-lg p-8">
             <div class="mb-8 text-center">
-                <h2 class="text-2xl font-bold dark:text-white">Kayıt Ol</h2>
+                <h2 class="text-2xl font-bold dark:text-white"><?php echo __('register'); ?></h2>
                 <p class="text-gray-600 dark:text-gray-300">
                     <?php echo getSetting('site_title'); ?>
                 </p>
@@ -186,35 +192,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
                 <?php echo $success; ?>
                 <p class="mt-2">                    <a href="/login" class="text-green-700 font-bold hover:text-green-800">
-                        Giriş yapmak için tıklayın
+                        <?php echo __('click_to_login'); ?>
                     </a>
                 </p>
             </div>
             <?php else: ?>
             <form method="post" class="space-y-6" autocomplete="off">
                 <div>
-                    <label class="block text-gray-700 dark:text-gray-200 mb-2">Kullanıcı Adı</label>
+                    <label class="block text-gray-700 dark:text-gray-200 mb-2"><?php echo __('username'); ?></label>
                     <input type="text" name="username" required autocomplete="username"
                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500 dark:bg-[#292929] dark:text-white dark:border-gray-600"
                            value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : ''; ?>">
                 </div>
                 
                 <div>
-                    <label class="block text-gray-700 dark:text-gray-200 mb-2">E-posta</label>
+                    <label class="block text-gray-700 dark:text-gray-200 mb-2"><?php echo __('email'); ?></label>
                     <input type="email" name="email" required autocomplete="email"
                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500 dark:bg-[#292929] dark:text-white dark:border-gray-600"
                            value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>">
                 </div>
                 
                 <div>
-                    <label class="block text-gray-700 dark:text-gray-200 mb-2">Şifre</label>
+                    <label class="block text-gray-700 dark:text-gray-200 mb-2"><?php echo __('password'); ?></label>
                     <input type="password" name="password" required autocomplete="new-password"
                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500 dark:bg-[#292929] dark:text-white dark:border-gray-600"
                            minlength="6">
                 </div>
                 
                 <div>
-                    <label class="block text-gray-700 dark:text-gray-200 mb-2">Şifre (Tekrar)</label>
+                    <label class="block text-gray-700 dark:text-gray-200 mb-2"><?php echo __('password_confirm'); ?></label>
                     <input type="password" name="password_confirm" required autocomplete="new-password"
                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500 dark:bg-[#292929] dark:text-white dark:border-gray-600"
                            minlength="6">
@@ -228,11 +234,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 <button type="submit" 
                         class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-300">
-                    Kayıt Ol
+                    <?php echo __('register_button'); ?>
                 </button>
                   <div class="text-center text-gray-600 dark:text-gray-300">
-                    Zaten hesabınız var mı? 
-                    <a href="/login" class="text-blue-500 hover:text-blue-600">Giriş Yap</a>
+                    <?php echo __('have_account'); ?> 
+                    <a href="/login" class="text-blue-500 hover:text-blue-600"><?php echo __('login'); ?></a>
                 </div>
             </form>
             <?php endif; ?>
