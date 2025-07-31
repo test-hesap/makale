@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /aramalar/
+Disallow: /vendor/
+Disallow: /admin/
+Disallow: /includes/
+
+Sitemap: https://herbilgi.net/sitemap.xml

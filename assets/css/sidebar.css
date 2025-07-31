@@ -1,0 +1,26 @@
+/* Sidebar açılır-kapanır özelliği için CSS */
+.collapsible-sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.collapsible-sidebar-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+}
+
+.collapsible-sidebar-content.open {
+    max-height: 1000px; /* Yeterince büyük bir değer */
+}
+
+.rotate-icon {
+    transition: transform 0.3s ease;
+}
+
+.rotate-icon.open {
+    transform: rotate(180deg);
+}

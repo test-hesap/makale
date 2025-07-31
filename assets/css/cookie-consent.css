@@ -1,0 +1,104 @@
+/* Cookie Consent Styling */
+.cookie-consent {
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem;
+    box-shadow: 0 -1px 10px rgba(0, 0, 0, 0.15);
+    z-index: 9999;
+    width: 100%;
+    max-width: 100%;
+    font-family: inherit;
+    transition: all 0.3s ease;
+    animation: slideIn 0.5s forwards;
+}
+
+.cookie-consent.top {
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+.cookie-consent.bottom {
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.cookie-consent.bottom-left {
+    bottom: 1rem;
+    left: 1rem;
+    max-width: 350px;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.cookie-consent.bottom-right {
+    bottom: 1rem;
+    right: 1rem;
+    max-width: 350px;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.cookie-consent-text {
+    flex-grow: 1;
+}
+
+.cookie-consent-button {
+    border: none;
+    padding: 0.6rem 1.5rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.cookie-consent-button:hover {
+    opacity: 0.9;
+}
+
+/* Çerez bildirimi içindeki linkler için stil */
+.cookie-consent a {
+    color: inherit;
+    font-weight: 600;
+    text-decoration: underline;
+    transition: opacity 0.2s;
+}
+
+.cookie-consent a:hover {
+    opacity: 0.8;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .cookie-consent {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 0.5rem;
+    }
+    
+    .cookie-consent.bottom-left,
+    .cookie-consent.bottom-right {
+        max-width: calc(100% - 2rem);
+    }
+    
+    .cookie-consent-button {
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+}
