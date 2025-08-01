@@ -1,8 +1,11 @@
 <?php
 require_once 'includes/config.php';
 $page_title = getActiveLang() == 'en' ? "Cookie Policy" : "Çerez Politikası";
-include 'templates/header.php';
-?>
+include 'templates/header.php'; ?>
+
+<div class="container mx-auto px-4 py-0 mt-1">
+    <!-- Boşluk eklendi -->
+</div>
 
 <div class="container mx-auto px-4 py-8">
     <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 mb-8">

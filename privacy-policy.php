@@ -4,8 +4,11 @@ $page_title = getActiveLang() == 'en' ? "Privacy Policy" : "Gizlilik Politikası
 $meta_description = getActiveLang() == 'en' ? "Information about our site's privacy policy and protection of personal data." : "Sitemizin gizlilik politikası ve kişisel verilerin korunmasına ilişkin bilgiler.";
 $meta_keywords = getActiveLang() == 'en' ? "privacy policy, personal data, data protection" : "gizlilik politikası, kişisel veriler, veri koruma";
 
-require_once 'templates/header.php';
-?>
+require_once 'templates/header.php'; ?>
+
+<div class="container mx-auto px-4 py-0 mt-1">
+    <!-- Boşluk eklendi -->
+</div>
 
 <main class="container mx-auto px-4 py-8">
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
