@@ -128,11 +128,24 @@ try {
     }
     
     // Articles tablosuna featured_image sütunu ekleme
-    $db->exec("ALTER TABLE articles ADD COLUMN IF NOT EXISTS featured_image VARCHAR(255) DEFAULT NULL AFTER content");
+    // Sütun var mı kontrol et, yoksa ekle
+    $checkColumn = $db->query("SHOW COLUMNS FROM articles LIKE 'featured_image'");
+    if ($checkColumn->rowCount() == 0) {
+        $db->exec("ALTER TABLE articles ADD COLUMN featured_image VARCHAR(255) DEFAULT NULL AFTER content");
+    }
     
     // Users tablosuna premium üyelik sütunu ekleme
-    $db->exec("ALTER TABLE users ADD COLUMN IF NOT EXISTS is_premium TINYINT(1) DEFAULT 0 AFTER role");
-    $db->exec("ALTER TABLE users ADD COLUMN IF NOT EXISTS premium_until DATE DEFAULT NULL AFTER is_premium");
+    // Kullanıcı premium durumu sütunu kontrolü
+    $checkIsPremium = $db->query("SHOW COLUMNS FROM users LIKE 'is_premium'");
+    if ($checkIsPremium->rowCount() == 0) {
+        $db->exec("ALTER TABLE users ADD COLUMN is_premium TINYINT(1) DEFAULT 0 AFTER role");
+    }
+    
+    // Premium bitiş tarihi sütunu kontrolü
+    $checkPremiumUntil = $db->query("SHOW COLUMNS FROM users LIKE 'premium_until'");
+    if ($checkPremiumUntil->rowCount() == 0) {
+        $db->exec("ALTER TABLE users ADD COLUMN premium_until DATE DEFAULT NULL AFTER is_premium");
+    }
 } catch(PDOException $e) {
     die("Veritabanı bağlantı hatası: " . $e->getMessage());
 }

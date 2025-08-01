@@ -147,52 +147,53 @@ include 'includes/header.php';
                 <div class="mb-8">
                     <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
                         <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4"><?php echo t('admin_quick_actions'); ?></h2>
-                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 lg:grid-cols-6 xl:grid-cols-6 gap-4">
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 lg:grid-cols-7 xl:grid-cols-7 gap-3">
                             <!-- Yeni Makale -->
-                            <a href="articles.php?action=create" class="flex flex-col items-center justify-center bg-blue-500 hover:bg-blue-600 text-white rounded-lg p-4 transition-colors duration-200">
-                                <i class="fas fa-plus text-2xl mb-2"></i>
-                                <span class="text-center text-sm"><?php echo t('admin_new_article'); ?></span>
+                            <a href="articles.php?action=create" class="flex flex-col items-center justify-center bg-blue-500 hover:bg-blue-600 text-white rounded-lg p-3 transition-colors duration-200">
+                                <i class="fas fa-plus text-xl mb-1"></i>
+                                <span class="text-center text-xs"><?php echo t('admin_new_article'); ?></span>
                             </a>
 
                             <!-- Kategori Ekle -->
-                            <a href="categories.php?action=create" class="flex flex-col items-center justify-center bg-green-500 hover:bg-green-600 text-white rounded-lg p-4 transition-colors duration-200">
-                                <i class="fas fa-tag text-2xl mb-2"></i>
-                                <span class="text-center text-sm"><?php echo t('admin_add_category'); ?></span>
+                            <a href="categories.php?action=create" class="flex flex-col items-center justify-center bg-green-500 hover:bg-green-600 text-white rounded-lg p-3 transition-colors duration-200">
+                                <i class="fas fa-tag text-xl mb-1"></i>
+                                <span class="text-center text-xs"><?php echo t('admin_add_category'); ?></span>
                             </a>
 
                             <!-- Kullanıcılar -->
-                            <a href="users.php" class="flex flex-col items-center justify-center bg-amber-600 hover:bg-amber-700 text-white rounded-lg p-4 transition-colors duration-200">
-                                <i class="fas fa-users text-2xl mb-2"></i>
-                                <span class="text-center text-sm"><?php echo t('admin_users'); ?></span>
+                            <a href="users.php" class="flex flex-col items-center justify-center bg-amber-600 hover:bg-amber-700 text-white rounded-lg p-3 transition-colors duration-200">
+                                <i class="fas fa-users text-xl mb-1"></i>
+                                <span class="text-center text-xs"><?php echo t('admin_users'); ?></span>
                             </a>
 
                             <!-- Yorumlar -->
-                            <a href="comments.php" class="flex flex-col items-center justify-center bg-red-600 hover:bg-red-700 text-white rounded-lg p-4 transition-colors duration-200">
-                                <i class="fas fa-comments text-2xl mb-2"></i>
-                                <span class="text-center text-sm"><?php echo t('admin_comments'); ?></span>
+                            <a href="comments.php" class="flex flex-col items-center justify-center bg-red-600 hover:bg-red-700 text-white rounded-lg p-3 transition-colors duration-200">
+                                <i class="fas fa-comments text-xl mb-1"></i>
+                                <span class="text-center text-xs"><?php echo t('admin_comments'); ?></span>
                             </a>
 
                             <!-- Makale AI -->
-                            <a href="ai_article_bot.php" class="flex flex-col items-center justify-center bg-purple-600 hover:bg-purple-700 text-white rounded-lg p-4 transition-colors duration-200">
-                                <i class="fas fa-robot text-2xl mb-2"></i>
-                                <span class="text-center text-sm"><?php echo t('admin_article_ai'); ?></span>
+                            <a href="ai_article_bot.php" class="flex flex-col items-center justify-center bg-purple-600 hover:bg-purple-700 text-white rounded-lg p-3 transition-colors duration-200">
+                                <i class="fas fa-robot text-xl mb-1"></i>
+                                <span class="text-center text-xs"><?php echo t('admin_article_ai'); ?></span>
                             </a>
 
                             <!-- Bakım Modu -->
-                            <a href="maintenance.php" class="flex flex-col items-center justify-center <?php echo $maintenance_mode === '1' ? 'bg-red-600 hover:bg-red-700' : 'bg-orange-600 hover:bg-orange-700'; ?> text-white rounded-lg p-4 transition-colors duration-200">
-                                <i class="fas fa-tools text-2xl mb-2"></i>
-                                <span class="text-center text-sm">Bakım Modu</span>
+                            <a href="maintenance.php" class="flex flex-col items-center justify-center <?php echo $maintenance_mode === '1' ? 'bg-red-600 hover:bg-red-700' : 'bg-orange-600 hover:bg-orange-700'; ?> text-white rounded-lg p-3 transition-colors duration-200">
+                                <i class="fas fa-tools text-xl mb-1"></i>
+                                <span class="text-center text-xs">Bakım Modu</span>
                                 <?php if ($maintenance_mode === '1'): ?>
                                     <span class="text-xs mt-1 opacity-80">Aktif</span>
                                 <?php endif; ?>
                             </a>
 
                             <!-- Ayarlar -->
-                            <a href="settings.php" class="flex flex-col items-center justify-center bg-gray-600 hover:bg-gray-700 text-white rounded-lg p-4 transition-colors duration-200">
-                                <i class="fas fa-cogs text-2xl mb-2"></i>
-                                <span class="text-center text-sm"><?php echo t('admin_settings'); ?></span>
+                            <a href="settings.php" class="flex flex-col items-center justify-center bg-gray-600 hover:bg-gray-700 text-white rounded-lg p-3 transition-colors duration-200">
+                                <i class="fas fa-cogs text-xl mb-1"></i>
+                                <span class="text-center text-xs"><?php echo t('admin_settings'); ?></span>
                             </a>
                         </div>
+                        <div class="mt-2"></div>
                     </div>
                 </div>
 
