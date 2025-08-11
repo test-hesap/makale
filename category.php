@@ -156,7 +156,7 @@ $site_description = getSetting('site_description');
                             : '/assets/img/default-article.jpg';
                         ?>
                         <img src="<?php echo $imgSrc; ?>" 
-                             alt="<?php echo htmlspecialchars($article['title']); ?>" 
+                             alt="<?php echo safeTitle($article['title']); ?>" 
                              class="w-full h-48 object-cover">
                         <?php else: ?>
                         <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
@@ -176,7 +176,7 @@ $site_description = getSetting('site_description');
                                 
                                 <h2 class="text-xl font-semibold mb-2">
                                     <a href="/makale/<?php echo urlencode($article['slug']); ?>" class="text-gray-900 hover:text-blue-600">
-                                        <?php echo htmlspecialchars($article['title']); ?>
+                                        <?php echo safeTitle($article['title']); ?>
                                     </a>
                                 </h2>
                                 
@@ -318,7 +318,7 @@ $site_description = getSetting('site_description');
                                 : '/assets/img/default-article.jpg';
                             ?>
                             <img src="<?php echo $imgSrc; ?>" 
-                                 alt="<?php echo htmlspecialchars($article['title']); ?>" 
+                                 alt="<?php echo safeTitle($article['title']); ?>" 
                                  class="w-20 h-20 object-cover rounded">
                             <?php else: ?>
                             <div class="w-20 h-20 bg-gray-200 rounded flex items-center justify-center">
@@ -326,7 +326,7 @@ $site_description = getSetting('site_description');
                             </div>
                             <?php endif; ?>
                             <div class="flex-1">                                <h4 class="font-medium text-gray-900 group-hover:text-blue-600 line-clamp-2 sidebar-article-title">
-                                    <?php echo htmlspecialchars($article['title']); ?>
+                                    <?php echo safeTitle($article['title']); ?>
                                 </h4>
                                 <div class="flex items-center text-sm text-gray-500 mt-1">
                                     <span><?php echo date('d.m.Y', strtotime($article['created_at'])); ?></span>

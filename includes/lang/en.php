@@ -17,6 +17,7 @@ $lang = [
     'articles' => 'Articles',
     'categories' => 'Categories',
     'tags' => 'Tags',
+    'error' => 'Error',
     'search_placeholder' => 'Search for articles or categories...',
     'search_results' => 'Search Results',
     'search_results_for' => 'search results for',
@@ -762,6 +763,20 @@ $lang = [
     'admin_regularly_renew_keys' => 'Regularly renew your keys',
     'admin_remove_unnecessary_permissions' => 'Remove unnecessary permissions from your API keys',
     'admin_settings_stored_in_database' => 'These settings are stored in the database',
+    'admin_default_provider' => 'Default Provider',
+    'admin_text_ai_api_keys' => 'Text AI API Keys',
+    'admin_image_ai_api_keys' => 'Image AI API Keys',
+    'admin_google_gemini_api_key' => 'Google Gemini API Key',
+    'admin_xai_grok_api_key' => 'xAI Grok API Key',
+    'admin_hugging_face_api_key' => 'Hugging Face API Key',
+    'admin_google_search_api_key' => 'Google Search API Key',
+    'admin_google_search_engine_id' => 'Google Search Engine ID',
+    'admin_unsplash_access_key' => 'Unsplash Access Key',
+    'admin_enter_google_search_api_key' => 'Enter your Google Custom Search API key',
+    'admin_enter_google_search_engine_id' => 'Enter your Custom Search Engine ID',
+    'admin_enter_unsplash_access_key' => 'Enter your Unsplash Access Key',
+    'admin_daily_free_searches' => 'Daily 100 free searches',
+    'admin_create_custom_search_engine' => 'Create Custom Search Engine',
     
     // Admin Messages
     'admin_message_management' => 'Message Management',
@@ -1562,5 +1577,21 @@ $lang = [
     'maintenance_estimated_end_time' => 'Estimated End Time',
     
     // File Upload related translations
-    'admin_choose_file' => 'Choose File'
+    'admin_choose_file' => 'Choose File',
+    
+    // Editor API Management
+    'admin_editor_api' => 'Editor API',
+    'admin_editor_api_management' => 'Editor API Management',
+    'admin_tinymce_api_key' => 'TinyMCE API Key',
+    'admin_tinymce_api_description' => 'Enter your TinyMCE API key here. This key will be used in the admin panel and user article creation pages.',
+    'admin_tinymce_api_save' => 'Save API Key',
+    'admin_tinymce_api_saved' => 'TinyMCE API key saved successfully.',
+    'admin_tinymce_api_error' => 'An error occurred while saving the API key.',
+    'admin_tinymce_api_current' => 'Current API Key',
+    'admin_tinymce_api_not_set' => 'API key not set yet',
+    'admin_tinymce_api_help' => 'To get a TinyMCE API key',
+    'admin_tinymce_api_link' => 'click here',
+    'admin_tinymce_api_placeholder' => 'Enter your TinyMCE API key here...',
+    'admin_tinymce_api_note' => 'Note: This API key will be valid for all editor usages.',
+    'admin_tinymce_api_security' => 'Security: Do not share your API key with anyone.'
 ];

@@ -565,7 +565,7 @@ $similar_articles = $similar_stmt->fetchAll(PDO::FETCH_ASSOC);
                                         : "/uploads/ai_images/" . $article['featured_image']);
                                 ?>
                                 <img src="<?php echo $imgSrc; ?>" 
-                                     alt="<?php echo htmlspecialchars($article['title']); ?>"
+                                     alt="<?php echo safeTitle($article['title']); ?>"
                                      class="w-full h-64 md:h-80 object-cover rounded-lg shadow-lg"
                                      loading="eager">
                             </div>

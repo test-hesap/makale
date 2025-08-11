@@ -38,7 +38,7 @@ error_log("Admin sidebar: Avatar dosyası - $avatar_path - " . (file_exists($ava
         </h2>
     </div>
     <nav class="mt-6 flex-1 overflow-y-auto sidebar-scroll" x-data="{ 
-        contentOpen: <?php echo in_array($current_page, ['articles', 'categories', 'comments', 'ai_article_bot', 'ai_bot_settings', 'article_view_settings', 'headlines']) ? 'true' : 'false'; ?>, 
+        contentOpen: <?php echo in_array($current_page, ['articles', 'categories', 'comments', 'ai_article_bot', 'ai_bot_settings', 'article_view_settings', 'headlines', 'editor_api']) ? 'true' : 'false'; ?>, 
         usersOpen: <?php echo in_array($current_page, ['users', 'subscriptions', 'premium_manager', 'ban_users', 'banned_users', 'payments']) ? 'true' : 'false'; ?>, 
         siteOpen: <?php echo in_array($current_page, ['settings', 'seo', 'ads', 'bots', 'cookies', 'backup', 'payment_methods', 'maintenance']) ? 'true' : 'false'; ?>,
         paymentOpen: <?php echo ($current_page === 'payments') ? 'true' : 'false'; ?>
@@ -94,6 +94,10 @@ error_log("Admin sidebar: Avatar dosyası - $avatar_path - " . (file_exists($ava
                 <a href="ai_bot_settings.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable <?php echo $current_page === 'ai_bot_settings' ? 'active bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'; ?>">
                     <i class="fas fa-key mr-3"></i>
                     <?php echo t('admin_ai_settings'); ?>
+                </a>
+                <a href="editor_api.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable <?php echo $current_page === 'editor_api' ? 'active bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'; ?>">
+                    <i class="fas fa-edit mr-3"></i>
+                    <?php echo t('admin_editor_api'); ?>
                 </a>
             </div>
         </div>

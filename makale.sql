@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Anamakine: 127.0.0.1
--- Üretim Zamanı: 31 Tem 2025, 20:27:25
+-- Üretim Zamanı: 11 Ağu 2025, 22:23:52
 -- Sunucu sürümü: 10.4.32-MariaDB
 -- PHP Sürümü: 8.2.12
 
@@ -38,14 +38,6 @@ CREATE TABLE `admin_notifications` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Tablo döküm verisi `admin_notifications`
---
-
-INSERT INTO `admin_notifications` (`id`, `type`, `user_id`, `message`, `link`, `related_id`, `is_read`, `created_at`) VALUES
-(45, 'new_user', NULL, 'test adlı yeni bir kullanıcı kaydoldu', '/admin/users.php?id=2', 2, 1, '2025-07-29 12:28:46'),
-(46, 'new_article', NULL, 'test tarafından \"deneme\" başlıklı yeni bir makale eklendi', '/admin/articles.php?action=edit&id=1', 1, 1, '2025-07-29 12:29:38');
-
 -- --------------------------------------------------------
 
 --
@@ -65,11 +57,15 @@ CREATE TABLE `ai_bot_settings` (
 --
 
 INSERT INTO `ai_bot_settings` (`id`, `setting_key`, `setting_value`, `created_at`, `updated_at`) VALUES
-(1, 'gemini_api_key', '', '2025-07-19 10:49:55', '2025-07-29 12:23:54'),
-(2, 'grok_api_key', '', '2025-07-19 10:49:55', '2025-07-29 12:23:54'),
-(3, 'huggingface_api_key', '', '2025-07-19 10:49:55', '2025-07-29 12:23:54'),
-(4, 'default_provider', 'gemini', '2025-07-19 10:49:55', '2025-07-29 12:23:54'),
-(5, 'bot_enabled', '0', '2025-07-19 10:49:55', '2025-07-29 12:23:54');
+(1, 'gemini_api_key', '', '2025-07-19 10:49:55', '2025-08-11 20:01:15'),
+(2, 'grok_api_key', '', '2025-07-19 10:49:55', '2025-08-11 20:01:15'),
+(3, 'huggingface_api_key', '', '2025-07-19 10:49:55', '2025-08-11 20:01:15'),
+(4, 'default_provider', 'gemini', '2025-07-19 10:49:55', '2025-08-11 20:01:15'),
+(5, 'bot_enabled', '1', '2025-07-19 10:49:55', '2025-08-11 20:01:15'),
+(47, 'google_search_api_key', '', '2025-08-11 17:41:24', '2025-08-11 20:01:15'),
+(48, 'google_search_engine_id', '', '2025-08-11 17:41:24', '2025-08-11 20:01:15'),
+(49, 'unsplash_access_key', '', '2025-08-11 17:41:24', '2025-08-11 20:01:15'),
+(74, 'tinymce_api_key', '', '2025-08-11 19:56:15', '2025-08-11 20:01:20');
 
 -- --------------------------------------------------------
 
@@ -224,6 +220,27 @@ CREATE TABLE `contacts` (
 -- --------------------------------------------------------
 
 --
+-- Tablo için tablo yapısı `editor_api_settings`
+--
+
+CREATE TABLE `editor_api_settings` (
+  `id` int(11) NOT NULL,
+  `setting_key` varchar(100) NOT NULL,
+  `setting_value` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Tablo döküm verisi `editor_api_settings`
+--
+
+INSERT INTO `editor_api_settings` (`id`, `setting_key`, `setting_value`, `created_at`, `updated_at`) VALUES
+(1, 'tinymce_api_key', '', '2025-08-11 19:56:54', '2025-08-11 19:56:54');
+
+-- --------------------------------------------------------
+
+--
 -- Tablo için tablo yapısı `maintenance_logs`
 --
 
@@ -261,13 +278,6 @@ CREATE TABLE `online_guests` (
   `last_activity` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `ip_address` varchar(45) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Tablo döküm verisi `online_guests`
---
-
-INSERT INTO `online_guests` (`id`, `guest_id`, `last_activity`, `ip_address`) VALUES
-(568, 'guest_688b5ef47bbbe', '2025-07-31 12:17:58', '::1');
 
 -- --------------------------------------------------------
 
@@ -501,7 +511,7 @@ INSERT INTO `settings` (`id`, `key`, `value`, `created_at`, `cookie_text`, `cook
 (2297, 'turnstile_theme', 'auto', '2025-06-21 17:07:20', '', '', '', '1', '', '', '', ''),
 (2951, 'smtp_enabled', '1', '2025-06-24 19:37:34', '', '', '', '1', '', '', '', ''),
 (2952, 'smtp_host', '', '2025-06-24 19:37:34', '', '', '', '1', '', '', '', ''),
-(2953, 'smtp_port', '587', '2025-06-24 19:37:34', '', '', '', '1', '', '', '', ''),
+(2953, 'smtp_port', '', '2025-06-24 19:37:34', '', '', '', '1', '', '', '', ''),
 (2954, 'smtp_secure', 'tls', '2025-06-24 19:37:34', '', '', '', '1', '', '', '', ''),
 (2955, 'smtp_username', '', '2025-06-24 19:37:34', '', '', '', '1', '', '', '', ''),
 (2956, 'smtp_password', '', '2025-06-24 19:37:34', '', '', '', '1', '', '', '', ''),
@@ -555,14 +565,14 @@ INSERT INTO `settings` (`id`, `key`, `value`, `created_at`, `cookie_text`, `cook
 (5662, 'iyzico_secret_key', '', '2025-07-27 18:00:09', '', '', '', '1', '', '', '', ''),
 (5663, 'iyzico_base_url', 'https://sandbox-api.iyzipay.com', '2025-07-27 18:00:09', '', '', '', '1', '', '', '', ''),
 (5664, 'payment_methods', '{\"paytr\":{\"active\":0,\"name\":\"PayTR\"},\"iyzico\":{\"active\":1,\"name\":\"iyzico\"}}', '2025-07-27 18:00:09', '', '', '', '1', '', '', '', ''),
-(6238, 'maintenance_mode', '0', '2025-07-31 18:27:19', '', '', '', '1', '', '', '', ''),
-(6239, 'maintenance_title', 'Site Bakımda', '2025-07-31 18:27:19', '', '', '', '1', '', '', '', ''),
-(6240, 'maintenance_message', 'Sitemiz şu anda bakım modunda. Kısa süre sonra tekrar hizmetinizde olacağız.', '2025-07-31 18:27:19', '', '', '', '1', '', '', '', ''),
-(6241, 'maintenance_title_en', 'Site Under Maintenance', '2025-07-31 18:27:19', '', '', '', '1', '', '', '', ''),
-(6242, 'maintenance_message_en', 'Our site is currently under maintenance. We will be back shortly.', '2025-07-31 18:27:19', '', '', '', '1', '', '', '', ''),
-(6243, 'maintenance_end_time', '', '2025-07-31 18:27:19', '', '', '', '1', '', '', '', ''),
-(6244, 'maintenance_countdown_enabled', '1', '2025-07-31 18:27:19', '', '', '', '1', '', '', '', ''),
-(6245, 'maintenance_contact_email', 'info@localhost', '2025-07-31 18:27:19', '', '', '', '1', '', '', '', '');
+(6299, 'maintenance_mode', '0', '2025-07-31 18:13:39', '', '', '', '1', '', '', '', ''),
+(6300, 'maintenance_title', 'Site Bakımda', '2025-07-31 18:13:39', '', '', '', '1', '', '', '', ''),
+(6301, 'maintenance_message', 'Sitemiz şu anda bakım modunda. Kısa süre sonra tekrar hizmetinizde olacağız.', '2025-07-31 18:13:39', '', '', '', '1', '', '', '', ''),
+(6302, 'maintenance_title_en', 'Site Under Maintenance', '2025-07-31 18:13:39', '', '', '', '1', '', '', '', ''),
+(6303, 'maintenance_message_en', 'Our site is currently under maintenance. We will be back shortly.', '2025-07-31 18:13:39', '', '', '', '1', '', '', '', ''),
+(6304, 'maintenance_end_time', '2025-07-31T22:13', '2025-07-31 18:13:39', '', '', '', '1', '', '', '', ''),
+(6305, 'maintenance_countdown_enabled', '1', '2025-07-31 18:13:39', '', '', '', '1', '', '', '', ''),
+(6306, 'maintenance_contact_email', 'info@localhost', '2025-07-31 18:13:39', '', '', '', '1', '', '', '', '');
 
 -- --------------------------------------------------------
 
@@ -601,7 +611,6 @@ CREATE TABLE `team_members` (
 --
 
 INSERT INTO `team_members` (`id`, `user_id`, `name`, `title`, `avatar`, `bio`, `order_num`, `is_active`) VALUES
-(1, NULL, 'bilgi', 'üye', '', '', 1, 1),
 (3, 1, 'Admin', 'Admin', '', '', 2, 1);
 
 -- --------------------------------------------------------
@@ -646,7 +655,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `full_name`, `email`, `password`, `avatar`, `role`, `is_premium`, `premium_until`, `status`, `can_post`, `approved`, `created_at`, `bio`, `location`, `website`, `twitter`, `facebook`, `instagram`, `linkedin`, `register_date`, `last_login`, `last_ip`, `youtube`, `tiktok`, `github`, `last_activity`, `is_online`) VALUES
-(1, 'admin', 'Bulent', 'admin@local.ben', '$2y$10$2CCnweRZBCjG0mks8Uvyc.8txmBxL3DV8hRQ4iQmKuB0iwCs8BpM2', 'default-avatar.jpg', 'admin', 0, NULL, 'active', 0, 0, '2025-06-13 23:31:26', '4', 'dasdas', 'https://example.com', '1', '2', '3', '4', '2025-06-16 23:17:01', '2025-07-31 15:18:02', NULL, '5', '6', '7', '2025-07-31 12:18:04', 1);
+(1, 'admin', 'Bulent', 'admin@local.ben', '$2y$10$T61F7zq5LliPOQSuQlVahusrFIG7/8OnqIisjgqcNBaV2I1rfcw5m', 'default-avatar.jpg', 'admin', 0, NULL, 'active', 0, 0, '2025-08-11 20:08:21', '4', 'dasdas', 'https://example.com', '1', '2', '3', '4', '2025-06-16 23:17:01', '2025-08-11 22:42:36', NULL, '5', '6', '7', '2025-08-11 20:23:34', 1);
 
 -- --------------------------------------------------------
 
@@ -800,6 +809,13 @@ ALTER TABLE `contacts`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Tablo için indeksler `editor_api_settings`
+--
+ALTER TABLE `editor_api_settings`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `setting_key` (`setting_key`);
+
+--
 -- Tablo için indeksler `maintenance_logs`
 --
 ALTER TABLE `maintenance_logs`
@@ -941,7 +957,7 @@ ALTER TABLE `admin_notifications`
 -- Tablo için AUTO_INCREMENT değeri `ai_bot_settings`
 --
 ALTER TABLE `ai_bot_settings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=85;
 
 --
 -- Tablo için AUTO_INCREMENT değeri `articles`
@@ -965,7 +981,7 @@ ALTER TABLE `article_headlines`
 -- Tablo için AUTO_INCREMENT değeri `article_views`
 --
 ALTER TABLE `article_views`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=116;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=130;
 
 --
 -- Tablo için AUTO_INCREMENT değeri `banned_users`
@@ -998,6 +1014,12 @@ ALTER TABLE `contacts`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
+-- Tablo için AUTO_INCREMENT değeri `editor_api_settings`
+--
+ALTER TABLE `editor_api_settings`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- Tablo için AUTO_INCREMENT değeri `maintenance_logs`
 --
 ALTER TABLE `maintenance_logs`
@@ -1013,7 +1035,7 @@ ALTER TABLE `online_bots`
 -- Tablo için AUTO_INCREMENT değeri `online_guests`
 --
 ALTER TABLE `online_guests`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=569;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=575;
 
 --
 -- Tablo için AUTO_INCREMENT değeri `password_resets`
@@ -1049,7 +1071,7 @@ ALTER TABLE `refund_requests`
 -- Tablo için AUTO_INCREMENT değeri `settings`
 --
 ALTER TABLE `settings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6246;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6384;
 
 --
 -- Tablo için AUTO_INCREMENT değeri `subscriptions`
@@ -1085,7 +1107,7 @@ ALTER TABLE `user_messages`
 -- Tablo için AUTO_INCREMENT değeri `user_remember_tokens`
 --
 ALTER TABLE `user_remember_tokens`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- Tablo için AUTO_INCREMENT değeri `user_sessions`

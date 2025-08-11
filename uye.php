@@ -525,7 +525,7 @@ require_once 'templates/header.php';
                         ?>
                         <img src="<?php echo $imgSrc; ?>" 
                              class="w-full h-48 object-cover" 
-                             alt="<?php echo htmlspecialchars($article['title']); ?>">
+                             alt="<?php echo safeTitle($article['title']); ?>">
                     <?php else: ?>
                         <div class="bg-gradient-to-r from-blue-500 to-purple-600 p-8 flex items-center justify-center">
                             <span class="text-white text-4xl"><i class="far fa-file-alt"></i></span>
@@ -546,7 +546,7 @@ require_once 'templates/header.php';
                         </div>
                           <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">
                             <a href="/makale/<?php echo $article['slug']; ?>" class="hover:text-blue-600">
-                                <?php echo htmlspecialchars($article['title']); ?>
+                                <?php echo safeTitle($article['title']); ?>
                             </a>
                         </h3>
                         

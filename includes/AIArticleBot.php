@@ -184,7 +184,7 @@ class AIArticleBot {
     /**
      * Ana makale üretme fonksiyonu
      */
-    public function generateAndPublishArticle($provider = null) {
+    public function generateAndPublishArticle($provider = null, $language = 'tr') {
         try {
             if (!$this->isBotEnabled()) {
                 $this->log("AI Bot devre dışı.");
@@ -192,6 +192,10 @@ class AIArticleBot {
             }
             
             $provider = $provider ?: $this->getDefaultProvider();
+            
+            // Dil kontrolü
+            $language = in_array($language, ['tr', 'en']) ? $language : 'tr';
+            $this->log("Makale üretimi başlatıldı - Provider: $provider, Dil: $language");
             
             // Benzersiz konu bulmak için maksimum deneme sayısı
             $maxAttempts = 10;
@@ -201,7 +205,7 @@ class AIArticleBot {
             // Benzersiz bir konu bulana kadar dene
             for ($attempt = 1; $attempt <= $maxAttempts && !$isTopicUnique; $attempt++) {
                 // Rastgele konu ve kategori seç
-                $topicData = $this->getRandomTopic();
+                $topicData = $this->getRandomTopic($language);
                 $topic = $topicData['topic'];
                 $categoryId = $topicData['category_id'];
                 $categoryName = $topicData['category_name'];
@@ -225,7 +229,7 @@ class AIArticleBot {
             $this->log("Seçilen kategori: $categoryName (ID: $categoryId), konu: $topic");
             
             // Makale üret
-            $article = $this->generateArticle($topic, $provider);
+            $article = $this->generateArticle($topic, $provider, $language);
             
             if (!$article) {
                 $this->log("HATA: Makale üretilemedi.");
@@ -294,7 +298,7 @@ class AIArticleBot {
     /**
      * Rastgele kategori ve konu seçer - veritabanı kategorilerine göre
      */
-    private function getRandomTopic() {
+    private function getRandomTopic($language = 'tr') {
         // Önce veritabanından rastgele kategori seç
         if (empty($this->categories)) {
             // Kategoriler yüklenemediği için fallback yap
@@ -315,10 +319,10 @@ class AIArticleBot {
         $categoryId = $randomCategory['id'];
         $categoryName = $randomCategory['name'];
         
-        // Kategori adına göre konu belirle
-        $topic = $this->getTopicByCategory($categoryName);
+        // Kategori adına göre konu belirle (dile göre)
+        $topic = $this->getTopicByCategory($categoryName, $language);
         
-        $this->log("Seçilen kategori: $categoryName (ID: $categoryId), konu: $topic");
+        $this->log("Seçilen kategori: $categoryName (ID: $categoryId), konu: $topic, dil: $language");
         
         return [
             'topic' => $topic,
@@ -330,8 +334,20 @@ class AIArticleBot {
     /**
      * Kategori adına göre uygun konu belirler
      */
-    private function getTopicByCategory($categoryName) {
+    private function getTopicByCategory($categoryName, $language = 'tr') {
         $categoryName = mb_strtolower($categoryName, 'UTF-8');
+        
+        if ($language === 'en') {
+            return $this->getEnglishTopicByCategory($categoryName);
+        } else {
+            return $this->getTurkishTopicByCategory($categoryName);
+        }
+    }
+    
+    /**
+     * Türkçe konular için kategori eşleştirme
+     */
+    private function getTurkishTopicByCategory($categoryName) {
         
         // Geniş kategorilere göre daha zengin konu havuzu
         $categoryMapping = [
@@ -607,6 +623,265 @@ class AIArticleBot {
     }
     
     /**
+     * İngilizce konular için kategori eşleştirme
+     */
+    private function getEnglishTopicByCategory($categoryName) {
+        // English category mapping
+        $categoryMapping = [
+            // Technology categories
+            'teknoloji' => [
+                'artificial intelligence in daily life', 'technology trends', 'digital transformation',
+                'cybersecurity', 'blockchain technology', 'metaverse', 'big data analytics',
+                'internet of things', 'virtual reality', 'augmented reality', 'smart cities',
+                'cloud computing', 'robotics', 'automation systems', 'software development',
+                'AI ethics', 'data privacy', 'digital detox', 'coding education',
+                'quantum computing', 'sustainable technology', '5G and beyond', 'biotechnology'
+            ],
+            'bilgisayar' => [
+                'AI applications', 'game development', 'web technologies',
+                'hardware innovations', 'data storage technologies', 'operating systems',
+                'desktop virtualization', 'computer security', 'open source software',
+                'cloud-based services', 'programming languages', 'microprocessors',
+                'computer networks', 'graphics cards', 'supercomputers',
+                'wearable technology', 'retro computers', 'server technologies'
+            ],
+            'yazılım' => [
+                'software development methodologies', 'programming languages', 'app development',
+                'mobile software', 'embedded systems', 'DevOps', 'open source software',
+                'software testing', 'database systems', 'software architecture',
+                'API development', 'microservices', 'AI algorithms',
+                'user interface design', 'code quality', 'distributed systems',
+                'continuous integration', 'software licensing', 'software education'
+            ],
+            'internet' => [
+                'digital marketing', 'search engine optimization', 'content management',
+                'social media strategies', 'e-commerce', 'web security',
+                'online privacy', 'internet law', 'web hosting',
+                'cloud computing', 'internet protocols', 'web standards',
+                'domain names', 'internet speeds', 'web accessibility',
+                'internet addiction', 'digital reputation management', 'online communities',
+                'data economy', 'online encyclopedias', 'podcast broadcasting'
+            ],
+            
+            // Health categories
+            'sağlık' => [
+                'healthy living', 'immune system boosting', 'chronic diseases',
+                'mental health', 'stress management', 'sleep quality',
+                'holistic health', 'alternative medicine', 'health technologies',
+                'medical innovations', 'preventive health', 'biotechnology',
+                'genetic testing', 'personalized medicine', 'vaccines',
+                'anti-aging methods', 'environmental health', 'health policies',
+                'digital health', 'wearable health devices', 'health inequalities'
+            ],
+            'tıp' => [
+                'modern medical methods', 'surgical innovations', 'telemedicine',
+                'drug research', 'gene therapy', 'medical AI',
+                'cancer treatments', 'organ transplantation', 'stem cell research',
+                'rare diseases', 'neurology', 'cardiology',
+                'pediatrics', 'geriatrics', 'psychiatry',
+                'medical ethics', 'infectious diseases', 'vaccine development',
+                'genome editing', 'bionic limbs', 'robotic surgery'
+            ],
+            'beslenme' => [
+                'balanced nutrition', 'dietary supplements', 'sustainable nutrition',
+                'vegetarian and vegan diets', 'probiotics', 'antioxidants',
+                'macro and micronutrients', 'metabolic health', 'diet trends',
+                'detox diets', 'food intolerances', 'nutrition and immunity',
+                'nutritional values', 'water and hydration', 'reading food labels',
+                'local and seasonal eating', 'carbohydrates', 'proteins',
+                'healthy fats', 'sugar consumption', 'food additives'
+            ],
+            'spor' => [
+                'exercise types', 'home fitness', 'sports and mental health',
+                'training programs', 'performance enhancement', 'sports injuries',
+                'sports nutrition', 'cardiovascular exercises', 'endurance training',
+                'flexibility and mobility', 'sports psychology', 'active lifestyle',
+                'sports technologies', 'team sports', 'individual sports',
+                'outdoor sports', 'water sports', 'winter sports',
+                'olympic sports', 'extreme sports', 'yoga and pilates'
+            ],
+            
+            // Education categories
+            'eğitim' => [
+                'learning methods', 'educational technology', 'distance education',
+                'lifelong learning', 'STEM education', 'early childhood education',
+                'AI in education', 'student-centered education', 'innovative pedagogy',
+                'learning difficulties', 'equity in education', 'school systems',
+                'educational reforms', 'teacher training', 'curriculum development',
+                'assessment and evaluation', 'digitalization in education', 'global education',
+                'character education', 'creative education', 'arts education'
+            ],
+            'öğrenme' => [
+                'fast learning techniques', 'brain development', 'memory enhancement',
+                'motivation and learning', 'learning styles', 'critical thinking',
+                'problem-solving skills', 'creative thinking', 'language learning',
+                'mathematical thinking', 'cognitive sciences', 'learning psychology',
+                'neurodevelopment', 'reading skills', 'concentration improvement',
+                'note-taking techniques', 'exam preparation', 'lifelong learning',
+                'learning barriers', 'attention development', 'concept mapping'
+            ],
+            'kariyer' => [
+                'career development', 'workplace success', 'future professions',
+                'professional skills', 'leadership', 'entrepreneurship',
+                'job search strategies', 'resume writing', 'interview techniques',
+                'networking', 'remote work', 'digital nomadism',
+                'work-life balance', 'career change', 'vocational training',
+                'online portfolios', 'freelance work', 'side income sources',
+                'professional branding', 'mentorship', 'career coaching'
+            ],
+            'gelişim' => [
+                'personal development', 'confidence building', 'habit formation',
+                'time management', 'productivity', 'goal setting',
+                'self-discipline', 'emotional intelligence', 'communication skills',
+                'stress management', 'mindfulness', 'positive psychology',
+                'sleep optimization', 'morning routines', 'meditation',
+                'personal finance', 'brain exercises', 'creativity development',
+                'social skills', 'listening skills', 'empathy development'
+            ],
+            
+            // Science categories
+            'bilim' => [
+                'scientific discoveries', 'physics world', 'space research',
+                'chemistry innovations', 'biology and life', 'geology',
+                'astronomy', 'quantum physics', 'evolution theory',
+                'climate science', 'neuroscience', 'history of science',
+                'scientific method', 'biotechnology', 'nanotechnology',
+                'sustainable science', 'science and ethics', 'popular science',
+                'scientific literacy', 'philosophy of science', 'scientific curiosity'
+            ],
+            'araştırma' => [
+                'research methodologies', 'data analysis', 'scientific publications',
+                'academic research', 'market research', 'user experience research',
+                'qualitative research', 'quantitative research', 'case studies',
+                'literature review', 'experimental design', 'research ethics',
+                'hypothesis formation', 'research funding', 'interdisciplinary research',
+                'open access science', 'innovation research', 'social research',
+                'research and development', 'exploratory research', 'scientific collaboration'
+            ],
+            'çevre' => [
+                'sustainability', 'climate change', 'biodiversity',
+                'renewable energy', 'water resources', 'air pollution',
+                'recycling', 'plastic pollution', 'ecological footprint',
+                'nature conservation', 'eco-friendly living', 'green buildings',
+                'carbon footprint', 'forest conservation', 'marine ecosystem',
+                'agriculture and environment', 'sustainable transport', 'clean energy',
+                'circular economy', 'zero waste', 'environmental policies'
+            ],
+            'uzay' => [
+                'space exploration', 'astronomy', 'exoplanets',
+                'Mars exploration', 'space stations', 'space tourism',
+                'black holes', 'star formation', 'galaxies',
+                'asteroids and comets', 'space telescope', 'space law',
+                'space mining', 'space colonization', 'spacecraft technology',
+                'life in space', 'cosmology', 'space and time',
+                'solar system', 'space history', 'SETI research'
+            ],
+            
+            // Lifestyle categories
+            'yaşam' => [
+                'lifestyle', 'minimalism', 'sustainable living',
+                'home decoration', 'travel', 'hobby development',
+                'digital life', 'social relationships', 'healthy routines',
+                'budget management', 'time management', 'work-life balance',
+                'family life', 'home productivity', 'life satisfaction',
+                'social media detox', 'home organization', 'life skills',
+                'personal time', 'morning routines', 'self-care'
+            ],
+            'kültür' => [
+                'cultural heritage', 'world cultures', 'popular culture',
+                'cultural identity', 'traditions', 'festivals and celebrations',
+                'language and culture', 'music history', 'art movements',
+                'literary world', 'cinema culture', 'food culture',
+                'cultural diversity', 'cultural change', 'mythology',
+                'folklore', 'indigenous cultures', 'digital culture',
+                'culture and society', 'intercultural communication', 'cultural anthropology'
+            ],
+            'seyahat' => [
+                'travel guides', 'adventure travel', 'cultural tours',
+                'gastronomy tourism', 'eco-tourism', 'budget travel',
+                'luxury travel', 'solo travel', 'family travel',
+                'travel photography', 'digital nomadism', 'transportation tips',
+                'accommodation options', 'travel insurance', 'local experiences',
+                'hidden gems', 'city tours', 'history and travel',
+                'nature hiking', 'winter vacation destinations', 'beach vacations'
+            ],
+            'hobi' => [
+                'creative hobbies', 'craft projects', 'collecting',
+                'gardening', 'cooking', 'photography',
+                'playing music', 'drawing and painting', 'writing',
+                'handicrafts', 'woodworking', 'digital art',
+                'sewing and embroidery', 'ceramics', 'reading',
+                'sports hobbies', 'nature hobbies', 'technology hobbies',
+                'brain games', 'science experiments', 'model making'
+            ],
+            
+            // Other categories
+            'ekonomi' => [
+                'economic trends', 'financial literacy', 'investment strategies',
+                'cryptocurrency economy', 'sustainable economy', 'digital economy',
+                'global economy', 'microeconomics', 'macroeconomics',
+                'economic policies', 'income inequality', 'consumer behavior',
+                'economic growth', 'inflation', 'economic indicators',
+                'business economics', 'behavioral economics', 'economic history',
+                'economics and technology', 'economic education', 'economic crises'
+            ],
+            'finans' => [
+                'personal finance', 'investment basics', 'retirement planning',
+                'debt management', 'budgeting', 'tax planning',
+                'financial independence', 'passive income', 'stock investment',
+                'real estate investment', 'cryptocurrency investment', 'financial goals',
+                'insurance planning', 'fintech', 'banking services',
+                'financial education', 'family budget', 'student loans',
+                'pension funds', 'emergency fund', 'estate planning'
+            ],
+            'iş' => [
+                'entrepreneurship', 'business strategies', 'small businesses',
+                'e-commerce', 'business models', 'marketing',
+                'sales techniques', 'customer relations', 'human resources',
+                'leadership skills', 'team management', 'company culture',
+                'business ethics', 'business law', 'digital transformation',
+                'business analysis', 'innovation', 'project management',
+                'risk management', 'crisis management', 'business financing'
+            ],
+            'sanat' => [
+                'art history', 'contemporary art', 'digital art',
+                'painting', 'sculpture', 'photography',
+                'graphic design', 'installation art', 'performance art',
+                'video art', 'art theory', 'art criticism',
+                'art collection', 'art market', 'art museums',
+                'art education', 'art therapy', 'street art',
+                'art and society', 'art and technology', 'art and politics'
+            ]
+        ];
+        
+        // Find the most suitable category
+        foreach ($categoryMapping as $key => $topics) {
+            if (strpos($categoryName, $key) !== false) {
+                $selectedTopic = $topics[array_rand($topics)];
+                $this->log("English category mapping: '$categoryName' -> '$key' -> '$selectedTopic'");
+                return $selectedTopic;
+            }
+        }
+        
+        // General Topics - if no match found
+        $generalTopics = [
+            'current topics', 'lifestyle', 'personal development', 'knowledge and culture',
+            'social issues', 'daily life', 'practical information', 'general culture',
+            'nature and environment', 'digital transformation', 'healthy living', 'social media',
+            'time management', 'creativity', 'communication skills', 'emotional intelligence',
+            'productivity', 'learning strategies', 'quality of life', 'motivation',
+            'relationships', 'family life', 'mindfulness', 'brain health',
+            'sleep quality', 'stress reduction', 'mental peace', 'natural living',
+            'nutrition plan', 'movement and exercise', 'immune boosting'
+        ];
+        
+        $selectedTopic = $generalTopics[array_rand($generalTopics)];
+        $this->log("English category mapping not found: '$categoryName' -> general topic: '$selectedTopic'");
+        
+        return $selectedTopic;
+    }
+    
+    /**
      * Makale içeriğine resimleri yerleştirir
      */
     private function insertImagesIntoContent($content, $images) {
@@ -737,14 +1012,14 @@ class AIArticleBot {
     /**
      * AI provider'a göre makale üretir
      */
-    private function generateArticle($topic, $provider) {
+    private function generateArticle($topic, $provider, $language = 'tr') {
         switch ($provider) {
             case 'gemini':
-                return $this->generateWithGemini($topic);
+                return $this->generateWithGemini($topic, $language);
             case 'grok':
-                return $this->generateWithGrok($topic);
+                return $this->generateWithGrok($topic, $language);
             case 'huggingface':
-                return $this->generateWithHuggingFace($topic);
+                return $this->generateWithHuggingFace($topic, $language);
             default:
                 throw new Exception("Geçersiz AI provider: $provider");
         }
@@ -753,13 +1028,13 @@ class AIArticleBot {
     /**
      * Google Gemini ile makale üretir
      */
-    private function generateWithGemini($topic) {
+    private function generateWithGemini($topic, $language = 'tr') {
         $apiKey = $this->getApiKey('gemini');
         if (empty($apiKey)) {
             throw new Exception("Gemini API key tanımlanmamış");
         }
         
-        $prompt = $this->buildPrompt($topic);
+        $prompt = $this->buildPrompt($topic, $language);
         
         try {
             $response = $this->client->post('https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent', [
@@ -788,7 +1063,7 @@ class AIArticleBot {
                 throw new Exception("Gemini API'den geçersiz yanıt");
             }
             
-            return $this->parseGeneratedContent($data['candidates'][0]['content']['parts'][0]['text']);
+            return $this->parseGeneratedContent($data['candidates'][0]['content']['parts'][0]['text'], $language);
             
         } catch (RequestException $e) {
             throw new Exception("Gemini API hatası: " . $e->getMessage());
@@ -798,13 +1073,13 @@ class AIArticleBot {
     /**
      * xAI Grok ile makale üretir
      */
-    private function generateWithGrok($topic) {
+    private function generateWithGrok($topic, $language = 'tr') {
         $apiKey = $this->getApiKey('grok');
         if (empty($apiKey)) {
             throw new Exception("Grok API key tanımlanmamış");
         }
         
-        $prompt = $this->buildPrompt($topic);
+        $prompt = $this->buildPrompt($topic, $language);
         
         try {
             $response = $this->client->post('https://api.x.ai/v1/chat/completions', [
@@ -831,7 +1106,7 @@ class AIArticleBot {
                 throw new Exception("Grok API'den geçersiz yanıt");
             }
             
-            return $this->parseGeneratedContent($data['choices'][0]['message']['content']);
+            return $this->parseGeneratedContent($data['choices'][0]['message']['content'], $language);
             
         } catch (RequestException $e) {
             throw new Exception("Grok API hatası: " . $e->getMessage());
@@ -841,13 +1116,13 @@ class AIArticleBot {
     /**
      * Hugging Face ile makale üretir
      */
-    private function generateWithHuggingFace($topic) {
+    private function generateWithHuggingFace($topic, $language = 'tr') {
         $apiKey = $this->getApiKey('huggingface');
         if (empty($apiKey)) {
             throw new Exception("Hugging Face API key tanımlanmamış");
         }
         
-        $prompt = $this->buildPrompt($topic);
+        $prompt = $this->buildPrompt($topic, $language);
         
         try {
             $response = $this->client->post('https://api-inference.huggingface.co/models/microsoft/DialoGPT-large', [
@@ -871,7 +1146,7 @@ class AIArticleBot {
                 throw new Exception("Hugging Face API'den geçersiz yanıt");
             }
             
-            return $this->parseGeneratedContent($data[0]['generated_text']);
+            return $this->parseGeneratedContent($data[0]['generated_text'], $language);
             
         } catch (RequestException $e) {
             throw new Exception("Hugging Face API hatası: " . $e->getMessage());
@@ -881,11 +1156,22 @@ class AIArticleBot {
     /**
      * AI için prompt oluşturur
      */
-    private function buildPrompt($topic) {
+    private function buildPrompt($topic, $language = 'tr') {
         // Günün tarihini al ve formatla
         $currentDate = date('d.m.Y');
         $currentYear = date('Y');
         
+        if ($language === 'en') {
+            return $this->buildEnglishPrompt($topic, $currentDate, $currentYear);
+        } else {
+            return $this->buildTurkishPrompt($topic, $currentDate, $currentYear);
+        }
+    }
+    
+    /**
+     * Türkçe prompt oluşturur
+     */
+    private function buildTurkishPrompt($topic, $currentDate, $currentYear) {
         // Rastgele yazı stili seçenekleri
         $styles = [
             'bilgilendirici ve detaylı',
@@ -961,13 +1247,126 @@ ETİKETLER: [virgülle ayrılmış 4-6 adet etiket]
     }
     
     /**
+     * İngilizce prompt oluşturur
+     */
+    private function buildEnglishPrompt($topic, $currentDate, $currentYear) {
+        // Random writing styles for English
+        $styles = [
+            'informative and detailed',
+            'engaging and fluent',
+            'comparative and analytical',
+            'conversational and friendly',
+            'comprehensive and scientific',
+            'practical and solution-oriented',
+            'inspiring and motivational',
+            'descriptive and visual',
+            'step-by-step and educational',
+            'innovative and forward-thinking'
+        ];
+        
+        $selectedStyle = $styles[array_rand($styles)];
+        
+        // Random structures for English articles
+        $structures = [
+            'Introduction -> Definition and Importance -> Methods and Techniques -> Current Status and Examples -> Future Prospects -> Conclusion',
+            'Problem Statement -> Causes and Factors -> Effects and Consequences -> Solution Suggestions -> Action Plan -> Conclusion',
+            'Historical Development -> Current Technologies -> Advantages and Disadvantages -> Application Areas -> Future Trends -> Conclusion',
+            'Basic Concepts -> Detailed Analysis -> Practical Applications -> Success Stories -> Recommendations -> Conclusion',
+            'Current Status -> Challenges and Opportunities -> Innovation and Development -> Global Perspective -> Future Vision -> Conclusion',
+            'Introduction -> Key Components -> Working Principles -> Usage Areas -> Benefits -> Conclusion',
+            'Background Information -> Research and Data -> Analysis and Evaluation -> Comparison and Contrast -> Recommendations -> Conclusion',
+            'Problem Definition -> Root Causes -> Current Solutions -> New Approaches -> Implementation Steps -> Conclusion'
+        ];
+        
+        $selectedStructure = $structures[array_rand($structures)];
+        
+        // SEO optimized English keywords
+        $seoKeywords = [
+            'latest trends', 'innovative solutions', 'best practices', 'comprehensive guide',
+            'expert insights', 'practical tips', 'step-by-step approach', 'proven methods',
+            'industry standards', 'cutting-edge technology', 'future prospects', 'emerging technologies',
+            'sustainable solutions', 'digital transformation', 'global perspective', 'strategic approach',
+            'effective strategies', 'modern techniques', 'advanced concepts', 'professional development'
+        ];
+        
+        $selectedKeywords = array_rand(array_flip($seoKeywords), 3);
+        $keywordString = implode(', ', $selectedKeywords);
+        
+        return "You are a professional content writer specializing in creating high-quality, original articles. Create a comprehensive, SEO-optimized article on the topic: '$topic'.
+
+WRITING REQUIREMENTS:
+• Article must be 100% original and unique content
+• Use an {$selectedStyle} writing style
+• Structure: {$selectedStructure}
+• Target audience: General readers with interest in the topic
+• Word count: 800-1200 words
+• Include relevant examples and current information
+• Use transition sentences between paragraphs
+• Write in proper English (US/UK English acceptable)
+• Date reference: {$currentDate} ({$currentYear})
+
+SEO OPTIMIZATION:
+• Include these keywords naturally: {$keywordString}
+• Use keyword variations and synonyms
+• Create engaging subheadings
+• Include actionable insights
+• Provide practical value to readers
+
+CONTENT STRUCTURE:
+• Start with an engaging introduction that hooks the reader
+• Use 4-6 main sections with descriptive subheadings
+• Each section should have 2-3 well-developed paragraphs
+• Include specific examples, statistics, or case studies where relevant
+• End with a strong conclusion that summarizes key points and provides future outlook
+
+FORMAT YOUR RESPONSE EXACTLY AS FOLLOWS:
+TITLE: [Article title - engaging and descriptive, maximum 80 characters]
+
+CONTENT:
+<p>[Engaging introduction paragraph that introduces the topic and captures reader attention]</p>
+
+<h2>[First Main Heading]</h2>
+<p>[First section first paragraph]</p>
+<p>[First section second paragraph]</p>
+
+<h2>[Second Main Heading]</h2>
+<p>[Second section first paragraph]</p>
+<p>[Second section second paragraph]</p>
+
+<h2>[Third Main Heading]</h2>
+<p>[Third section first paragraph]</p>
+<p>[Third section second paragraph]</p>
+
+<h2>[Fourth Main Heading]</h2>
+<p>[Fourth section first paragraph]</p>
+<p>[Fourth section second paragraph]</p>
+
+<p>[Conclusion paragraph - summarizing key points and providing future outlook]</p>
+
+TAGS: [4-6 comma-separated English tags related to the topic]
+
+Important: Each paragraph must be between <p> tags, headings between <h2> tags. The title should be complete and engaging. Write the article in English:";
+    }
+    
+    /**
      * AI'dan gelen içeriği parse eder
      */
-    private function parseGeneratedContent($content) {
+    private function parseGeneratedContent($content, $language = 'tr') {
         $content = trim($content);
         
+        // Dile göre anahtar kelimeleri belirle
+        if ($language === 'en') {
+            $titlePattern = '/(?:TITLE:|BAŞLIK:)\s*(.+?)(?=\n|CONTENT:|İÇERİK:|TAGS:|ETİKETLER:|$)/s';
+            $contentPattern = '/(?:CONTENT:|İÇERİK:)\s*(.+?)(?=TAGS:|ETİKETLER:|$)/s';
+            $tagsPattern = '/(?:TAGS:|ETİKETLER:)\s*(.+?)$/s';
+        } else {
+            $titlePattern = '/(?:BAŞLIK:|TITLE:)\s*(.+?)(?=\n|İÇERİK:|CONTENT:|ETİKETLER:|TAGS:|$)/s';
+            $contentPattern = '/(?:İÇERİK:|CONTENT:)\s*(.+?)(?=ETİKETLER:|TAGS:|$)/s';
+            $tagsPattern = '/(?:ETİKETLER:|TAGS:)\s*(.+?)$/s';
+        }
+        
         // Başlık çıkar
-        if (preg_match('/BAŞLIK:\s*(.+?)(?=\n|İÇERİK:)/s', $content, $titleMatches)) {
+        if (preg_match($titlePattern, $content, $titleMatches)) {
             $title = trim($titleMatches[1]);
         } else {
             // Fallback: İlk satırı başlık olarak al
@@ -975,8 +1374,13 @@ ETİKETLER: [virgülle ayrılmış 4-6 adet etiket]
             $title = trim($lines[0]);
         }
         
+        // Başlıktan HTML tag'larını temizle
+        $title = strip_tags($title);
+        $title = html_entity_decode($title, ENT_QUOTES, 'UTF-8');
+        $title = trim($title);
+        
         // İçerik çıkar
-        if (preg_match('/İÇERİK:\s*(.+?)(?=ETİKETLER:|$)/s', $content, $contentMatches)) {
+        if (preg_match($contentPattern, $content, $contentMatches)) {
             $articleContent = trim($contentMatches[1]);
         } else {
             // Fallback: Başlıktan sonrasını içerik olarak al
@@ -985,16 +1389,17 @@ ETİKETLER: [virgülle ayrılmış 4-6 adet etiket]
         }
         
         // Etiketler çıkar
-        if (preg_match('/ETİKETLER:\s*(.+?)$/s', $content, $tagMatches)) {
+        if (preg_match($tagsPattern, $content, $tagMatches)) {
             $tags = trim($tagMatches[1]);
         } else {
-            // Fallback: Konuya göre otomatik etiket oluştur
-            $tags = $this->generateDefaultTags();
+            // Fallback: Başlıktan otomatik etiket oluştur
+            $tags = $this->generateTagsFromTitle($title, $language);
         }
         
-        // Başlığı 100 karakterle sınırla
-        if (strlen($title) > 100) {
-            $title = substr($title, 0, 97) . '...';
+        // Başlığı uzunluk kontrolü (İngilizce için daha uzun olabilir)
+        $maxLength = $language === 'en' ? 120 : 100;
+        if (strlen($title) > $maxLength) {
+            $title = substr($title, 0, $maxLength - 3) . '...';
         }
         
         // İçeriği formatla ve temizle
@@ -1085,9 +1490,81 @@ ETİKETLER: [virgülle ayrılmış 4-6 adet etiket]
     /**
      * Varsayılan etiketler oluşturur
      */
-    private function generateDefaultTags() {
-        $defaultTags = ['makale', 'blog', 'güncel', 'bilgi'];
+    private function generateDefaultTags($language = 'tr') {
+        if ($language === 'en') {
+            $defaultTags = ['article', 'blog', 'news', 'information', 'trends'];
+        } else {
+            $defaultTags = ['makale', 'blog', 'güncel', 'bilgi'];
+        }
         return implode(', ', $defaultTags);
+    }
+
+    /**
+     * Makale başlığından etiket oluşturur
+     */
+    private function generateTagsFromTitle($title, $language = 'tr') {
+        // Başlığı temizle ve küçük harfe çevir
+        $cleanTitle = strtolower($title);
+        $cleanTitle = preg_replace('/[^\w\s]/', '', $cleanTitle); // Noktalama işaretlerini kaldır
+        
+        if ($language === 'en') {
+            // İngilizce stop words (yaygın kelimeler)
+            $stopWords = [
+                'the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by',
+                'a', 'an', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had',
+                'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'can',
+                'this', 'that', 'these', 'those', 'what', 'where', 'when', 'why', 'how',
+                'your', 'you', 'we', 'they', 'it', 'he', 'she', 'his', 'her', 'their', 'our'
+            ];
+            
+            // Teknoloji/bilim alanında yaygın kelimeler
+            $commonTechWords = [
+                'technology', 'innovation', 'digital', 'future', 'modern', 'advanced', 'new',
+                'guide', 'tips', 'ways', 'methods', 'solutions', 'benefits', 'advantages',
+                'complete', 'comprehensive', 'ultimate', 'best', 'top', 'essential'
+            ];
+            
+        } else {
+            // Türkçe stop words
+            $stopWords = [
+                'bir', 'bu', 'şu', 'o', 've', 'veya', 'ama', 'fakat', 'için', 'ile', 'de', 'da',
+                'den', 'dan', 'nin', 'nın', 'nun', 'nün', 'ye', 'ya', 're', 'ra', 'ki', 'mi', 'mı',
+                'ne', 'na', 'sen', 'siz', 'ben', 'biz', 'onlar', 'onu', 'onda', 'onun'
+            ];
+            
+            $commonTechWords = [
+                'teknoloji', 'yenilik', 'dijital', 'gelecek', 'modern', 'gelişmiş', 'yeni',
+                'rehber', 'ipucu', 'yol', 'yöntem', 'çözüm', 'fayda', 'avantaj',
+                'tam', 'kapsamlı', 'en', 'iyi', 'üst', 'temel', 'nasıl', 'nedir'
+            ];
+        }
+        
+        // Başlığı kelimelere ayır
+        $words = explode(' ', $cleanTitle);
+        $keywords = [];
+        
+        foreach ($words as $word) {
+            $word = trim($word);
+            // En az 3 karakter olmalı, stop word olmamalı
+            if (strlen($word) >= 3 && !in_array($word, $stopWords) && !in_array($word, $commonTechWords)) {
+                // Çok yaygın kelimeler değilse ekle
+                if (!in_array($word, ['how', 'what', 'why', 'when', 'where', 'nasıl', 'nedir', 'neden', 'ne', 'nerede'])) {
+                    $keywords[] = $word;
+                }
+            }
+        }
+        
+        // En fazla 5 anahtar kelime al
+        $keywords = array_slice(array_unique($keywords), 0, 5);
+        
+        // Eğer yeterli anahtar kelime yoksa varsayılan etiketlerle tamamla
+        if (count($keywords) < 3) {
+            $defaultTags = $this->generateDefaultTags($language);
+            $defaultArray = explode(', ', $defaultTags);
+            $keywords = array_merge($keywords, array_slice($defaultArray, 0, 3 - count($keywords)));
+        }
+        
+        return implode(', ', $keywords);
     }
     
     /**

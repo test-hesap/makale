@@ -251,7 +251,7 @@ require_once 'templates/header.php';
         </div>
         
         <div class="bg-white p-4 rounded-lg shadow-sm mb-4">
-            <h3 class="text-lg font-bold mb-2"><?php echo htmlspecialchars($article['title']); ?></h3>
+            <h3 class="text-lg font-bold mb-2"><?php echo safeTitle($article['title']); ?></h3>
             <p class="text-gray-600 mb-2">
                 <span class="inline-block mr-3"><i class="fas fa-folder mr-1"></i> <?php echo htmlspecialchars($article['category_name']); ?></span>
                 <span class="inline-block mr-3"><i class="fas fa-user mr-1"></i> <?php echo htmlspecialchars($article['username']); ?></span>

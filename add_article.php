@@ -109,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php include 'templates/header.php'; ?>
 
 <!-- TinyMCE Editör -->
-<script src="https://cdn.tiny.cloud/1/YOUR_TIYNMCE_API/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<?php echo getTinyMCEScript(); ?>
 
 <!-- Form doğrulama fonksiyonu -->
 <script>

@@ -1495,3 +1495,70 @@ function isValidEmailProvider($email) {
     
     return false;
 }
+
+/**
+ * Makale başlığını güvenli hale getirir (HTML tag'larını temizler)
+ */
+if (!function_exists('safeTitle')) {
+    function safeTitle($title) {
+        // HTML entity'lerini decode et
+        $title = html_entity_decode($title, ENT_QUOTES, 'UTF-8');
+        // HTML tag'larını temizle
+        $title = strip_tags($title);
+        // Whitespace karakterlerini düzenle
+        $title = trim(preg_replace('/\s+/', ' ', $title));
+        // HTML karakterlerini güvenli hale getir
+        return htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
+    }
+}
+
+/**
+ * TinyMCE API anahtarını veritabanından alır
+ */
+if (!function_exists('getTinyMCEApiKey')) {
+    function getTinyMCEApiKey() {
+        global $db;
+        
+        try {
+            $stmt = $db->prepare("SELECT setting_value FROM ai_bot_settings WHERE setting_key = 'tinymce_api_key'");
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            return $result ? $result['setting_value'] : '';
+        } catch (PDOException $e) {
+            error_log("TinyMCE API anahtarı alınırken hata: " . $e->getMessage());
+            return '';
+        }
+    }
+}
+
+/**
+ * TinyMCE editör script tag'ini dinamik API anahtarı ile oluşturur
+ */
+if (!function_exists('getTinyMCEScript')) {
+    function getTinyMCEScript() {
+        $apiKey = getTinyMCEApiKey();
+        
+        if (empty($apiKey)) {
+            // API anahtarı yoksa demo sürümünü kullan
+            $apiKey = 'no-api-key';
+        }
+        
+        return '<script src="https://cdn.tiny.cloud/1/' . htmlspecialchars($apiKey) . '/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>';
+    }
+}
+
+/**
+ * TinyMCE API anahtarını JavaScript değişkeni olarak çıktı verir
+ */
+if (!function_exists('getTinyMCEApiKeyJS')) {
+    function getTinyMCEApiKeyJS() {
+        $apiKey = getTinyMCEApiKey();
+        
+        if (empty($apiKey)) {
+            $apiKey = 'no-api-key';
+        }
+        
+        return '<script>window.TINYMCE_API_KEY = "' . htmlspecialchars($apiKey) . '";</script>';
+    }
+}

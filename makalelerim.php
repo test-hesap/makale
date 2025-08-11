@@ -48,7 +48,7 @@ require_once 'templates/header.php';
                         $slug = preg_replace('/[^a-z0-9]+/', '-', strtolower(trim(str_replace(['ı', 'ğ', 'ü', 'ş', 'ö', 'ç'], ['i', 'g', 'u', 's', 'o', 'c'], $article['title']))));
                         ?>                        <div class="py-4">
                             <a href="/makale/<?php echo $slug; ?>" class="block hover:bg-gray-50 rounded transition-colors">
-                                <h2 class="text-lg font-medium text-gray-900"><?php echo htmlspecialchars($article['title']); ?></h2>
+                                <h2 class="text-lg font-medium text-gray-900"><?php echo safeTitle($article['title']); ?></h2>
                                 <p class="mt-1 text-gray-600 line-clamp-2"><?php echo substr(strip_tags(html_entity_decode($article['content'], ENT_QUOTES, 'UTF-8')), 0, 200) . '...'; ?></p>
                                 <div class="flex justify-between mt-2">
                                     <span class="text-sm text-gray-500">

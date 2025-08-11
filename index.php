@@ -183,7 +183,7 @@ $site_description = getSetting('site_description');
                         : '/assets/img/default-article.jpg';
                     ?>
                     <img src="<?php echo $imgSrc; ?>" 
-                         class="w-full h-full object-cover" alt="<?php echo htmlspecialchars($headline['title']); ?>">
+                         class="w-full h-full object-cover" alt="<?php echo safeTitle($headline['title']); ?>">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
                     <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
                         <div class="max-w-4xl">
@@ -192,7 +192,7 @@ $site_description = getSetting('site_description');
                             </span>
                             <h2 class="text-3xl md:text-4xl font-bold mb-3 leading-tight">
                                 <a href="/makale/<?php echo urlencode($headline['slug']); ?>" class="hover:text-blue-300 transition-colors">
-                                    <?php echo htmlspecialchars($headline['title']); ?>
+                                    <?php echo safeTitle($headline['title']); ?>
                                 </a>
                             </h2>
                             <p class="text-lg text-gray-200 mb-4 line-clamp-2">
@@ -257,7 +257,7 @@ $site_description = getSetting('site_description');
                     : '/assets/img/default-article.jpg';
                 ?>
                 <img src="<?php echo $imgSrc; ?>" 
-                     class="w-full h-full object-cover" alt="<?php echo htmlspecialchars($headline['title']); ?>">
+                     class="w-full h-full object-cover" alt="<?php echo safeTitle($headline['title']); ?>">
                 <div class="absolute top-2 left-2">
                     <span class="bg-red-600 text-white px-2 py-1 rounded text-xs font-medium"><?php echo __('featured'); ?></span>
                 </div>
@@ -270,7 +270,7 @@ $site_description = getSetting('site_description');
             <div class="p-4">
                 <h2 class="text-lg font-bold mb-2 hover:text-blue-600">
                     <a href="/makale/<?php echo urlencode($headline['slug']); ?>">
-                        <?php echo htmlspecialchars($headline['title']); ?>
+                        <?php echo safeTitle($headline['title']); ?>
                     </a>
                 </h2>
                 <p class="text-gray-600 text-sm mb-3">
@@ -314,12 +314,12 @@ $site_description = getSetting('site_description');
                         : '/assets/img/default-article.jpg';
                     ?>
                     <img src="<?php echo $imgSrc; ?>" 
-                         class="w-full h-full object-cover rounded" alt="<?php echo htmlspecialchars($headline['title']); ?>">
+                         class="w-full h-full object-cover rounded" alt="<?php echo safeTitle($headline['title']); ?>">
                 </div>
                 <div class="flex-grow">
                     <h3 class="font-bold text-gray-900 hover:text-blue-600 mb-1">
                         <a href="/makale/<?php echo urlencode($headline['slug']); ?>">
-                            <?php echo htmlspecialchars($headline['title']); ?>
+                            <?php echo safeTitle($headline['title']); ?>
                         </a>
                     </h3>
                     <p class="text-sm text-gray-600 mb-2">
@@ -359,7 +359,7 @@ $site_description = getSetting('site_description');
                                 : '/assets/img/default-article.jpg';
                             ?>
                             <img src="<?php echo $imgSrc; ?>" 
-                                 class="w-full h-full object-cover" alt="<?php echo htmlspecialchars($headline['title']); ?>">
+                                 class="w-full h-full object-cover" alt="<?php echo safeTitle($headline['title']); ?>">
                             <div class="absolute top-2 right-2">
                                 <span class="bg-yellow-500 text-white px-2 py-1 rounded text-xs font-medium">
                                     <i class="fas fa-star mr-1"></i>ÖNE ÇIKAN
@@ -369,7 +369,7 @@ $site_description = getSetting('site_description');
                         <div class="p-4">
                             <h3 class="font-bold text-gray-900 hover:text-blue-600 mb-2">
                                 <a href="/makale/<?php echo urlencode($headline['slug']); ?>">
-                                    <?php echo htmlspecialchars($headline['title']); ?>
+                                    <?php echo safeTitle($headline['title']); ?>
                                 </a>
                             </h3>
                             <div class="flex items-center text-xs text-gray-500">
@@ -686,7 +686,7 @@ if (v2Container) {
                                             ?>
                                             <img src="<?php echo $imgSrc; ?>" 
                                                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
-                                                 alt="<?php echo htmlspecialchars($headline['title']); ?>">
+                                                 alt="<?php echo safeTitle($headline['title']); ?>">
                                         </div>
                                     </div>
                                     <div class="flex-1 min-w-0">
@@ -700,7 +700,7 @@ if (v2Container) {
                                         </div>
                                         <h5 class="font-semibold text-gray-900 group-hover:text-red-600 transition-colors duration-200 line-clamp-2 mb-2">
                                             <a href="/makale/<?php echo urlencode($headline['slug']); ?>">
-                                                <?php echo htmlspecialchars($headline['title']); ?>
+                                                <?php echo safeTitle($headline['title']); ?>
                                             </a>
                                         </h5>
                                         <div class="flex items-center text-xs text-gray-500 space-x-3">
@@ -769,7 +769,7 @@ if (v2Container) {
                                     ?>
                                     <img src="<?php echo $imgSrc; ?>" 
                                          class="w-full h-full object-cover" 
-                                         alt="<?php echo htmlspecialchars($headline['title']); ?>">
+                                         alt="<?php echo safeTitle($headline['title']); ?>">
                                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
                                 </div>
                                 
@@ -783,7 +783,7 @@ if (v2Container) {
                                 <!-- Clickable Overlay - Tüm slide'ı tıklanabilir yap -->
                                 <a href="/makale/<?php echo urlencode($headline['slug']); ?>" 
                                    class="absolute inset-0 z-10 block"
-                                   title="<?php echo htmlspecialchars($headline['title']); ?>">
+                                   title="<?php echo safeTitle($headline['title']); ?>">
                                 </a>
                                 
                                 <!-- İçerik -->
@@ -792,7 +792,7 @@ if (v2Container) {
                                     <h2 class="text-3xl lg:text-4xl font-bold text-white mb-4 line-clamp-3 group-hover:text-red-300 transition-colors duration-300">
                                         <span class="pointer-events-auto">
                                             <a href="/makale/<?php echo urlencode($headline['slug']); ?>" class="relative z-30">
-                                                <?php echo htmlspecialchars($headline['title']); ?>
+                                                <?php echo safeTitle($headline['title']); ?>
                                             </a>
                                         </span>
                                     </h2>
@@ -835,7 +835,7 @@ if (v2Container) {
                             <button class="headline-v2-dot w-3 h-3 rounded-full transition-all duration-300 <?php echo $index === 0 ? 'bg-white' : 'bg-white/50'; ?>" 
                                     data-slide="<?php echo $index; ?>"
                                     data-article-slug="<?php echo htmlspecialchars($headline['slug']); ?>"
-                                    title="<?php echo htmlspecialchars($headline['title']); ?>"></button>
+                                    title="<?php echo safeTitle($headline['title']); ?>"></button>
                             <?php endforeach; ?>
                         </div>
                         <?php endif; ?>
@@ -901,7 +901,7 @@ if (v2Container) {
                                 ?>
                                 <img src="<?php echo $imgSrc; ?>" 
                                      class="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500" 
-                                     alt="<?php echo htmlspecialchars($article['title']); ?>">
+                                     alt="<?php echo safeTitle($article['title']); ?>">
                             </a>
                             <div class="p-3 flex flex-col flex-grow">
                                 <div class="flex justify-between items-center mb-2">
@@ -914,7 +914,7 @@ if (v2Container) {
                                 </div>
                                 <a href="/makale/<?php echo urlencode($article['slug']); ?>" class="block">
                                     <h3 class="text-sm font-bold text-gray-900 dark:text-white mb-1 line-clamp-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                                        <?php echo htmlspecialchars($article['title']); ?>
+                                        <?php echo safeTitle($article['title']); ?>
                                     </h3>
                                 </a>
                                 <div class="flex justify-between items-center text-xs text-gray-500 dark:text-gray-400 mt-auto">
@@ -975,7 +975,7 @@ if (v2Container) {
                             <div class="flex-grow">
                                 <h3 class="text-lg font-semibold mb-2">
                                     <a href="/makale/<?php echo urlencode($article['slug']); ?>" class="hover:text-blue-500">
-                                        <?php echo htmlspecialchars($article['title']); ?>
+                                        <?php echo safeTitle($article['title']); ?>
                                     </a>
                                 </h3>
                                 <p class="text-gray-600 text-sm mb-3"><?php echo formatTurkishDate($article['created_at']); ?></p>
@@ -1059,7 +1059,7 @@ if (v2Container) {
                                 ?>
                                 <img src="<?php echo $imgSrc; ?>" 
                                      class="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500" 
-                                     alt="<?php echo htmlspecialchars($article['title']); ?>">
+                                     alt="<?php echo safeTitle($article['title']); ?>">
                             </a>
                             <div class="p-5 flex flex-col flex-grow">
                                 <a href="/kategori/<?php echo urlencode($article['category_name']); ?>" class="text-blue-600 dark:text-blue-400 text-sm font-medium mb-2">
@@ -1067,7 +1067,7 @@ if (v2Container) {
                                 </a>
                                 <a href="/makale/<?php echo urlencode($article['slug']); ?>" class="block">
                                     <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                                        <?php echo htmlspecialchars($article['title']); ?>
+                                        <?php echo safeTitle($article['title']); ?>
                                     </h3>
                                 </a>
                                 <p class="text-gray-600 dark:text-gray-300 text-sm line-clamp-3 mb-4 flex-grow">
@@ -1125,7 +1125,7 @@ if (v2Container) {
                                 ?>
                                 <img src="<?php echo $imgSrc; ?>" 
                                      class="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500" 
-                                     alt="<?php echo htmlspecialchars($article['title']); ?>">
+                                     alt="<?php echo safeTitle($article['title']); ?>">
                             </a>
                             <div class="p-3 flex flex-col flex-grow">
                                 <div class="flex justify-between items-center mb-2">
@@ -1138,7 +1138,7 @@ if (v2Container) {
                                 </div>
                                 <a href="/makale/<?php echo urlencode($article['slug']); ?>" class="block">
                                     <h3 class="text-sm font-bold text-gray-900 dark:text-white mb-1 line-clamp-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                                        <?php echo htmlspecialchars($article['title']); ?>
+                                        <?php echo safeTitle($article['title']); ?>
                                     </h3>
                                 </a>
                                 <div class="flex justify-between items-center text-xs text-gray-500 dark:text-gray-400 mt-auto">
@@ -1322,7 +1322,7 @@ if (v2Container) {
                                     : "/uploads/ai_images/" . $article['featured_image']);
                             ?>
                             <img src="<?php echo $imgSrc; ?>" 
-                                 alt="<?php echo htmlspecialchars($article['title']); ?>" 
+                                 alt="<?php echo safeTitle($article['title']); ?>" 
                                  class="w-20 h-20 object-cover rounded">
                             <?php else: ?>
                             <div class="w-20 h-20 bg-gray-200 rounded flex items-center justify-center">
@@ -1330,7 +1330,7 @@ if (v2Container) {
                             </div>
                             <?php endif; ?>
                             <div class="flex-1">                                <h4 class="font-medium text-gray-900 group-hover:text-blue-600 line-clamp-2 sidebar-article-title">
-                                    <?php echo htmlspecialchars($article['title']); ?>
+                                    <?php echo safeTitle($article['title']); ?>
                                 </h4>
                                 <div class="flex items-center text-sm text-gray-500 mt-1">
                                     <span><?php echo date('d.m.Y', strtotime($article['created_at'])); ?></span>

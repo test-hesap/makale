@@ -78,7 +78,7 @@ foreach ($articles as $index => $article):
     <!-- Makale Bilgileri -->
     <div class="p-4 flex-grow">        <h3 class="text-lg font-semibold mb-2">
             <a href="/makale/<?php echo urlencode($article['slug']); ?>" class="hover:text-blue-500">
-                <?php echo htmlspecialchars($article['title']); ?>
+                <?php echo safeTitle($article['title']); ?>
             </a>
         </h3>
         <p class="text-gray-600 text-sm mb-3"><?php echo formatTurkishDate($article['created_at']); ?></p>

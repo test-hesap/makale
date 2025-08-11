@@ -5,6 +5,7 @@
  */
 
 class AIArticleImageManager {
+    private $db;
     private $uploadsDir;
     private $client;
     private $logFile;
@@ -17,14 +18,16 @@ class AIArticleImageManager {
     private $unsplashAccessKey;
     
     public function __construct() {
+        global $db;
+        $this->db = $db;
         $this->uploadsDir = __DIR__ . '/../uploads/ai_images/';
         $this->client = new \GuzzleHttp\Client();
         $this->logFile = AI_BOT_LOG_FILE;
         
-        // API anahtarları (config.php'den alınacak)
-        $this->searchApiKey = defined('GOOGLE_SEARCH_API_KEY') ? GOOGLE_SEARCH_API_KEY : '';
-        $this->searchEngineId = defined('GOOGLE_SEARCH_ENGINE_ID') ? GOOGLE_SEARCH_ENGINE_ID : '';
-        $this->unsplashAccessKey = defined('UNSPLASH_ACCESS_KEY') ? UNSPLASH_ACCESS_KEY : '';
+        // API anahtarları - önce veritabanından, sonra config.php'den
+        $this->searchApiKey = $this->getAiSetting('google_search_api_key') ?: (defined('GOOGLE_SEARCH_API_KEY') ? GOOGLE_SEARCH_API_KEY : '');
+        $this->searchEngineId = $this->getAiSetting('google_search_engine_id') ?: (defined('GOOGLE_SEARCH_ENGINE_ID') ? GOOGLE_SEARCH_ENGINE_ID : '');
+        $this->unsplashAccessKey = $this->getAiSetting('unsplash_access_key') ?: (defined('UNSPLASH_ACCESS_KEY') ? UNSPLASH_ACCESS_KEY : '');
         
         // Upload dizinini oluştur
         if (!is_dir($this->uploadsDir)) {
@@ -34,6 +37,22 @@ class AIArticleImageManager {
         // GD kütüphanesi kontrolü
         if (!extension_loaded('gd')) {
             $this->log("UYARI: GD kütüphanesi yüklü değil. Resim optimizasyonu ve yerel placeholder oluşturma devre dışı.");
+        }
+    }
+    
+    /**
+     * Veritabanından AI ayarını getirir
+     */
+    private function getAiSetting($key, $default = '') {
+        try {
+            $stmt = $this->db->prepare("SELECT setting_value FROM ai_bot_settings WHERE setting_key = ?");
+            $stmt->execute([$key]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            return $result ? $result['setting_value'] : $default;
+        } catch (PDOException $e) {
+            $this->log("UYARI: Ayar okunamadı ($key): " . $e->getMessage());
+            return $default;
         }
     }
     

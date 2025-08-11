@@ -641,15 +641,16 @@ define('AI_BOT_ENABLED', true);
 define('AI_BOT_DEFAULT_PROVIDER', 'gemini'); // gemini, grok, huggingface
 define('AI_BOT_LOG_FILE', __DIR__ . '/../logs/ai_bot.log');
 
-// API Keys - Güvenlik için .env dosyasından da okunabilir
-define('GEMINI_API_KEY', 'YOUR_GEMINI_API_KEY'); // Google Gemini API Key
-define('GROK_API_KEY', ''); // xAI Grok API Key  
-define('HUGGINGFACE_API_KEY', ''); // Hugging Face API Key
+// API Keys - Artık admin panelinden yönetiliyor (ai_bot_settings.php)
+// Fallback olarak burada tanımlanabilir, öncelik veritabanı ayarlarında
+define('GEMINI_API_KEY', ''); // Google Gemini API Key - Varsayılan değer
+define('GROK_API_KEY', ''); // xAI Grok API Key - Varsayılan değer
+define('HUGGINGFACE_API_KEY', ''); // Hugging Face API Key - Varsayılan değer
 
-// AI Bot Resim API Ayarları
-define('GOOGLE_SEARCH_API_KEY', 'YOUR_GOOGLE_SEARCH_API_KEY'); // Google Custom Search API Key (günlük 100 ücretsiz arama)
-define('GOOGLE_SEARCH_ENGINE_ID', 'YOUR_GOOGLE_SEARCH_ENGINE_ID'); // Google Custom Search Engine ID - gerçek resimler için
-define('UNSPLASH_ACCESS_KEY', 'YOUR_UNSPLASH_ACCESS_KEY'); // Unsplash Access Key - Buraya gerçek bir API anahtarı girmeniz gerekiyor
+// AI Bot Resim API Ayarları - Artık admin panelinden yönetiliyor
+define('GOOGLE_SEARCH_API_KEY', ''); // Google Custom Search API Key - Varsayılan değer
+define('GOOGLE_SEARCH_ENGINE_ID', ''); // Google Custom Search Engine ID - Varsayılan değer
+define('UNSPLASH_ACCESS_KEY', ''); // Unsplash Access Key - Varsayılan değer
 // Unsplash API anahtarı almak için: https://unsplash.com/developers
 
 // AI Bot konu kategorileri - genişletilmiş liste

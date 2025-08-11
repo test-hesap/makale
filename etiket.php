@@ -128,7 +128,7 @@ $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                 : "/uploads/ai_images/" . $article['featured_image']);
                                         ?>
                                         <img src="<?php echo $imgSrc; ?>" 
-                                            alt="<?php echo htmlspecialchars($article['title']); ?>"
+                                            alt="<?php echo safeTitle($article['title']); ?>"
                                             class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
                                     </a>
                                 <?php endif; ?>

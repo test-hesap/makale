@@ -3,6 +3,41 @@ require_once '../includes/config.php';
 require_once '../includes/AIArticleBot.php';
 checkAuth(true);
 
+// AI ayarları fonksiyonları
+function getAiSetting($key, $default = '') {
+    global $db;
+    
+    try {
+        $stmt = $db->prepare("SELECT setting_value FROM ai_bot_settings WHERE setting_key = ?");
+        $stmt->execute([$key]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        return $result ? $result['setting_value'] : $default;
+    } catch (PDOException $e) {
+        return $default;
+    }
+}
+
+function getApiKeyStatus($provider) {
+    // Önce veritabanından kontrol et
+    $dbKey = getAiSetting($provider . '_api_key');
+    if (!empty($dbKey)) {
+        return true;
+    }
+    
+    // Fallback: config.php sabitlerinden kontrol et
+    switch ($provider) {
+        case 'gemini':
+            return !empty(defined('GEMINI_API_KEY') ? GEMINI_API_KEY : '');
+        case 'grok':
+            return !empty(defined('GROK_API_KEY') ? GROK_API_KEY : '');
+        case 'huggingface':
+            return !empty(defined('HUGGINGFACE_API_KEY') ? HUGGINGFACE_API_KEY : '');
+        default:
+            return false;
+    }
+}
+
 $success = '';
 $error = '';
 
@@ -11,12 +46,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['generate_article'])) {
         try {
             $bot = new AIArticleBot();
-            $provider = $_POST['provider'] ?? AI_BOT_DEFAULT_PROVIDER;
+            $provider = $_POST['provider'] ?? getAiSetting('default_provider', AI_BOT_DEFAULT_PROVIDER);
+            $language = $_POST['article_language'] ?? 'tr';
             
-            $articleId = $bot->generateAndPublishArticle($provider);
+            $articleId = $bot->generateAndPublishArticle($provider, $language);
             
             if ($articleId) {
-                $success = str_replace('{id}', $articleId, t('admin_article_generated_success'));
+                $langText = $language === 'en' ? 'İngilizce' : 'Türkçe';
+                $success = "Makale başarıyla oluşturuldu! (ID: {$articleId}, Dil: {$langText})";
             } else {
                 $error = t('admin_article_generation_failed');
             }
@@ -56,7 +93,13 @@ include 'includes/header.php';
         <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
             <i class="fas fa-robot mr-3"></i><?php echo t('admin_article_ai_bot'); ?>
         </h1>
-        <div class="flex space-x-2">
+        <div class="flex items-center space-x-3">
+            <a href="migrate_api_keys.php" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors">
+                <i class="fas fa-database mr-2"></i>Migration
+            </a>
+            <a href="ai_bot_settings.php" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                <i class="fas fa-key mr-2"></i>API Ayarları
+            </a>
             <?php
             // Bot durumunu AIArticleBot sınıfından al
             $bot = new AIArticleBot();
@@ -156,16 +199,36 @@ include 'includes/header.php';
                             <?php echo t('admin_ai_provider_select'); ?>
                         </label>
                         <select name="provider" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-200">
-                            <option value="gemini" <?php echo AI_BOT_DEFAULT_PROVIDER === 'gemini' ? 'selected' : ''; ?>>
+                            <?php 
+                            $currentDefaultProvider = getAiSetting('default_provider', AI_BOT_DEFAULT_PROVIDER);
+                            ?>
+                            <option value="gemini" <?php echo $currentDefaultProvider === 'gemini' ? 'selected' : ''; ?>>
                                 <?php echo t('admin_google_gemini'); ?>
                             </option>
-                            <option value="grok" <?php echo AI_BOT_DEFAULT_PROVIDER === 'grok' ? 'selected' : ''; ?>>
+                            <option value="grok" <?php echo $currentDefaultProvider === 'grok' ? 'selected' : ''; ?>>
                                 <?php echo t('admin_xai_grok'); ?>
                             </option>
-                            <option value="huggingface" <?php echo AI_BOT_DEFAULT_PROVIDER === 'huggingface' ? 'selected' : ''; ?>>
+                            <option value="huggingface" <?php echo $currentDefaultProvider === 'huggingface' ? 'selected' : ''; ?>>
                                 <?php echo t('admin_hugging_face'); ?>
                             </option>
                         </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                            <i class="fas fa-language mr-2"></i>Makale Dili
+                        </label>
+                        <select name="article_language" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-200">
+                            <option value="tr" selected>
+                                🇹🇷 Türkçe
+                            </option>
+                            <option value="en">
+                                🇺🇸 English
+                            </option>
+                        </select>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            Seçilen dilde tamamen özgün makale üretilecektir
+                        </p>
                     </div>
                     
                     <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
@@ -257,7 +320,8 @@ include 'includes/header.php';
                                     'grok' => t('admin_xai_grok'),
                                     'huggingface' => t('admin_hugging_face')
                                 ];
-                                echo $providers[AI_BOT_DEFAULT_PROVIDER] ?? AI_BOT_DEFAULT_PROVIDER;
+                                $currentProvider = getAiSetting('default_provider', AI_BOT_DEFAULT_PROVIDER);
+                                echo $providers[$currentProvider] ?? $currentProvider;
                                 ?>
                             </p>
                         </div>
@@ -269,20 +333,20 @@ include 'includes/header.php';
                             <div class="space-y-2">
                                 <div class="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 rounded">
                                     <span class="text-sm"><?php echo t('admin_gemini_api_key'); ?></span>
-                                    <span class="text-xs <?php echo !empty(GEMINI_API_KEY) ? 'text-green-600' : 'text-red-600'; ?>">
-                                        <?php echo !empty(GEMINI_API_KEY) ? t('admin_defined') : t('admin_not_defined'); ?>
+                                    <span class="text-xs <?php echo getApiKeyStatus('gemini') ? 'text-green-600' : 'text-red-600'; ?>">
+                                        <?php echo getApiKeyStatus('gemini') ? t('admin_defined') : t('admin_not_defined'); ?>
                                     </span>
                                 </div>
                                 <div class="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 rounded">
                                     <span class="text-sm"><?php echo t('admin_grok_api_key'); ?></span>
-                                    <span class="text-xs <?php echo !empty(GROK_API_KEY) ? 'text-green-600' : 'text-red-600'; ?>">
-                                        <?php echo !empty(GROK_API_KEY) ? t('admin_defined') : t('admin_not_defined'); ?>
+                                    <span class="text-xs <?php echo getApiKeyStatus('grok') ? 'text-green-600' : 'text-red-600'; ?>">
+                                        <?php echo getApiKeyStatus('grok') ? t('admin_defined') : t('admin_not_defined'); ?>
                                     </span>
                                 </div>
                                 <div class="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 rounded">
                                     <span class="text-sm"><?php echo t('admin_hugging_face_api_key'); ?></span>
-                                    <span class="text-xs <?php echo !empty(HUGGINGFACE_API_KEY) ? 'text-green-600' : 'text-red-600'; ?>">
-                                        <?php echo !empty(HUGGINGFACE_API_KEY) ? t('admin_defined') : t('admin_not_defined'); ?>
+                                    <span class="text-xs <?php echo getApiKeyStatus('huggingface') ? 'text-green-600' : 'text-red-600'; ?>">
+                                        <?php echo getApiKeyStatus('huggingface') ? t('admin_defined') : t('admin_not_defined'); ?>
                                     </span>
                                 </div>
                             </div>
