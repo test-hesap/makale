@@ -222,8 +222,96 @@ error_log("Site Başlığı Değeri: " . ($settings['site_title'] ?? 'Bulunamad�
                 </div>
                 <?php endif; ?>
 
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+                    <!-- Tab Navigation -->
+                    <div class="border-b border-gray-200 dark:border-gray-700">
+                        <!-- Mobile Tab Dropdown -->
+                        <div class="block md:hidden px-6 pt-4">
+                            <button onclick="toggleMobileDropdown()" class="w-full flex justify-between items-center py-3 px-4 bg-gray-50 dark:bg-gray-700 rounded-lg text-left">
+                                <span class="text-gray-900 dark:text-white font-medium" id="current-tab-text">Genel Ayarlar</span>
+                                <svg id="dropdown-arrow" class="w-5 h-5 text-gray-500 dark:text-gray-400 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </button>
+                            
+                            <div id="mobile-dropdown" class="hidden mt-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-600 overflow-hidden">
+                                <button onclick="selectTab('general', 'Genel Ayarlar')" class="mobile-tab-item w-full flex items-center py-3 px-4 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                    <svg class="w-5 h-5 mr-3 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    </svg>
+                                    <span class="text-gray-900 dark:text-white">Genel Ayarlar</span>
+                                </button>
+                                
+                                <button onclick="selectTab('seo', 'SEO Ayarları')" class="mobile-tab-item w-full flex items-center py-3 px-4 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-t border-gray-100 dark:border-gray-600">
+                                    <svg class="w-5 h-5 mr-3 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                    </svg>
+                                    <span class="text-gray-900 dark:text-white">SEO Ayarları</span>
+                                </button>
+                                
+                                <button onclick="selectTab('premium', 'Premium Abonelik')" class="mobile-tab-item w-full flex items-center py-3 px-4 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-t border-gray-100 dark:border-gray-600">
+                                    <svg class="w-5 h-5 mr-3 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <span class="text-gray-900 dark:text-white">Premium Abonelik</span>
+                                </button>
+                                
+                                <button onclick="selectTab('email', 'E-posta Ayarları')" class="mobile-tab-item w-full flex items-center py-3 px-4 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-t border-gray-100 dark:border-gray-600">
+                                    <svg class="w-5 h-5 mr-3 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                    </svg>
+                                    <span class="text-gray-900 dark:text-white">E-posta Ayarları</span>
+                                </button>
+                                
+                                <button onclick="selectTab('turnstile', 'Spam Koruması')" class="mobile-tab-item w-full flex items-center py-3 px-4 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-t border-gray-100 dark:border-gray-600">
+                                    <svg class="w-5 h-5 mr-3 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                                    </svg>
+                                    <span class="text-gray-900 dark:text-white">Spam Koruması</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Desktop Tab Navigation -->
+                        <nav class="hidden md:flex space-x-8 px-6 pt-6" aria-label="Tabs">
+                            <button onclick="showTab('general')" class="tab-button active" data-tab="general">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                                <?php echo t('admin_general_settings'); ?>
+                            </button>
+                            <button onclick="showTab('seo')" class="tab-button" data-tab="seo">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                </svg>
+                                <?php echo t('admin_seo_settings'); ?>
+                            </button>
+                            <button onclick="showTab('premium')" class="tab-button" data-tab="premium">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <?php echo t('admin_premium_prices'); ?>
+                            </button>
+                            <button onclick="showTab('email')" class="tab-button" data-tab="email">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                </svg>
+                                <?php echo t('admin_email_settings'); ?>
+                            </button>
+                            <button onclick="showTab('turnstile')" class="tab-button" data-tab="turnstile">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                                </svg>
+                                Turnstile
+                            </button>
+                        </nav>
+                    </div>
+
                     <form method="post" class="space-y-6" enctype="multipart/form-data">
+                        <!-- General Settings Tab -->
+                        <div id="general-tab" class="tab-content p-6">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">                            <!-- Genel Ayarlar -->
                             <div class="space-y-6">
                                 <h2 class="text-xl font-bold text-gray-900 dark:text-gray-200"><?php echo t('admin_general_settings'); ?></h2>
@@ -370,8 +458,11 @@ error_log("Site Başlığı Değeri: " . ($settings['site_title'] ?? 'Bulunamad�
                                 </div>
                             </div>
                         </div>
+                        </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                        <!-- SEO Settings Tab -->
+                        <div id="seo-tab" class="tab-content hidden p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <!-- SEO Ayarları -->
                             <div class="space-y-6">
                                 <h2 class="text-xl font-bold text-gray-900 dark:text-gray-200"><?php echo t('admin_seo_settings'); ?></h2>
@@ -416,42 +507,6 @@ error_log("Site Başlığı Değeri: " . ($settings['site_title'] ?? 'Bulunamad�
                                            value="<?php echo $settings['social_instagram'] ?? ''; ?>"
                                            class="w-full px-4 py-2 border dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
                                            placeholder="https://instagram.com/...">
-                                </div>
-                            </div>
-                        </div>
-                          <!-- Premium Abonelik Fiyatları -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-                            <div class="space-y-6">
-                                <h2 class="text-xl font-bold text-gray-900 dark:text-gray-200"><?php echo t('admin_premium_prices'); ?></h2>
-                                  <div>
-                                    <label class="block text-gray-700 dark:text-gray-300 mb-2"><?php echo t('admin_monthly_price'); ?></label>
-                                    <input type="number" step="0.01" min="0" name="settings[premium_monthly_price]" 
-                                           value="<?php echo $settings['premium_monthly_price'] ?? '29.99'; ?>"
-                                           class="w-full px-4 py-2 border dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 rounded-lg focus:outline-none focus:border-blue-500">
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-gray-700 dark:text-gray-300 mb-2"><?php echo t('admin_yearly_price'); ?></label>
-                                    <input type="number" step="0.01" min="0" name="settings[premium_yearly_price]" 
-                                           value="<?php echo $settings['premium_yearly_price'] ?? '239.99'; ?>"
-                                           class="w-full px-4 py-2 border dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 rounded-lg focus:outline-none focus:border-blue-500">
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-gray-700 dark:text-gray-300 mb-2"><?php echo t('admin_yearly_discount'); ?></label>
-                                    <input type="number" step="1" min="0" max="100" name="settings[premium_yearly_discount]" 
-                                           value="<?php echo $settings['premium_yearly_discount'] ?? '33'; ?>"
-                                           class="w-full px-4 py-2 border dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 rounded-lg focus:outline-none focus:border-blue-500">
-                                </div>
-                            </div>
-                            
-                            <div class="space-y-6">
-                                <h2 class="text-xl font-bold text-gray-900 dark:text-gray-200"><?php echo t('admin_premium_features'); ?></h2>
-                                  <div>
-                                    <label class="block text-gray-700 dark:text-gray-300 mb-2"><?php echo t('admin_premium_features'); ?></label>
-                                    <textarea name="settings[premium_features]" rows="6" 
-                                              class="w-full px-4 py-2 border dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
-                                              placeholder="Reklamsız deneyim&#10;Özel içeriklere erişim&#10;Öncelikli destek"><?php echo $settings['premium_features'] ?? "Reklamsız deneyim\nÖzel içeriklere erişim\nÖncelikli destek\nVe daha fazlası..."; ?></textarea>
                                 </div>
                             </div>
                         </div>
@@ -633,7 +688,50 @@ error_log("Site Başlığı Değeri: " . ($settings['site_title'] ?? 'Bulunamad�
                                 </div>
                             </div>
                         </div>
+                        </div>
 
+                        <!-- Premium Settings Tab -->
+                        <div id="premium-tab" class="tab-content hidden p-6">
+                          <!-- Premium Abonelik Fiyatları -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                            <div class="space-y-6">
+                                <h2 class="text-xl font-bold text-gray-900 dark:text-gray-200"><?php echo t('admin_premium_prices'); ?></h2>
+                                  <div>
+                                    <label class="block text-gray-700 dark:text-gray-300 mb-2"><?php echo t('admin_monthly_price'); ?></label>
+                                    <input type="number" step="0.01" min="0" name="settings[premium_monthly_price]" 
+                                           value="<?php echo $settings['premium_monthly_price'] ?? '29.99'; ?>"
+                                           class="w-full px-4 py-2 border dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 rounded-lg focus:outline-none focus:border-blue-500">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-gray-700 dark:text-gray-300 mb-2"><?php echo t('admin_yearly_price'); ?></label>
+                                    <input type="number" step="0.01" min="0" name="settings[premium_yearly_price]" 
+                                           value="<?php echo $settings['premium_yearly_price'] ?? '239.99'; ?>"
+                                           class="w-full px-4 py-2 border dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 rounded-lg focus:outline-none focus:border-blue-500">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-gray-700 dark:text-gray-300 mb-2"><?php echo t('admin_yearly_discount'); ?></label>
+                                    <input type="number" step="1" min="0" max="100" name="settings[premium_yearly_discount]" 
+                                           value="<?php echo $settings['premium_yearly_discount'] ?? '33'; ?>"
+                                           class="w-full px-4 py-2 border dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 rounded-lg focus:outline-none focus:border-blue-500">
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-6">
+                                <h2 class="text-xl font-bold text-gray-900 dark:text-gray-200"><?php echo t('admin_premium_features'); ?></h2>
+                                  <div>
+                                    <label class="block text-gray-700 dark:text-gray-300 mb-2"><?php echo t('admin_premium_features'); ?></label>
+                                    <textarea name="settings[premium_features]" rows="6" 
+                                              class="w-full px-4 py-2 border dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
+                                              placeholder="Reklamsız deneyim&#10;Özel içeriklere erişim&#10;Öncelikli destek"><?php echo $settings['premium_features'] ?? "Reklamsız deneyim\nÖzel içeriklere erişim\nÖncelikli destek\nVe daha fazlası..."; ?></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+
+                        <!-- Email Settings Tab -->
+                        <div id="email-tab" class="tab-content hidden p-6">
                         <!-- E-posta (SMTP) Ayarları -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
                             <div class="space-y-6">
@@ -755,7 +853,10 @@ error_log("Site Başlığı Değeri: " . ($settings['site_title'] ?? 'Bulunamad�
                                 </div>
                             </div>
                         </div>
+                        </div>
 
+                        <!-- Turnstile Settings Tab -->
+                        <div id="turnstile-tab" class="tab-content hidden p-6">
                         <!-- Cloudflare Turnstile Spam Koruması -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
                             <div class="space-y-6">
@@ -850,8 +951,9 @@ error_log("Site Başlığı Değeri: " . ($settings['site_title'] ?? 'Bulunamad�
                                 </div>
                             </div>
                         </div>
+                        </div>
                         
-                        <div class="border-t dark:border-gray-700 pt-6">
+                        <div class="border-t dark:border-gray-700 pt-6 px-6">
                             <button type="submit" class="bg-blue-500 dark:bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800">
                                 <?php echo t('admin_save_settings'); ?>
                             </button>
@@ -859,8 +961,73 @@ error_log("Site Başlığı Değeri: " . ($settings['site_title'] ?? 'Bulunamad�
                     </form>                </div>
 </div>
 
-<!-- Şifre görünürlüğünü değiştirme JavaScript kodu -->
+<!-- Tab ve şifre görünürlüğünü değiştirme JavaScript kodu -->
 <script>
+// Mobile Dropdown Toggle
+function toggleMobileDropdown() {
+    const dropdown = document.getElementById('mobile-dropdown');
+    const arrow = document.getElementById('dropdown-arrow');
+    
+    if (dropdown.classList.contains('hidden')) {
+        dropdown.classList.remove('hidden');
+        arrow.style.transform = 'rotate(180deg)';
+    } else {
+        dropdown.classList.add('hidden');
+        arrow.style.transform = 'rotate(0deg)';
+    }
+}
+
+// Mobile Tab Selection
+function selectTab(tabName, tabText) {
+    // Update dropdown text
+    document.getElementById('current-tab-text').textContent = tabText;
+    
+    // Close dropdown
+    document.getElementById('mobile-dropdown').classList.add('hidden');
+    document.getElementById('dropdown-arrow').style.transform = 'rotate(0deg)';
+    
+    // Show selected tab
+    showTab(tabName);
+}
+
+// Tab işlevselliği
+function showTab(tabName) {
+    // Tüm tab-content'leri gizle
+    const tabContents = document.querySelectorAll('.tab-content');
+    tabContents.forEach(content => {
+        content.classList.add('hidden');
+    });
+    
+    // Tüm tab butonlarının active sınıfını kaldır
+    const tabButtons = document.querySelectorAll('.tab-button');
+    tabButtons.forEach(button => {
+        button.classList.remove('active');
+    });
+    
+    // Seçilen tab'ı göster
+    const selectedTab = document.getElementById(tabName + '-tab');
+    if (selectedTab) {
+        selectedTab.classList.remove('hidden');
+    }
+    
+    // Seçilen tab butonunu aktif yap
+    const selectedButton = document.querySelector(`[data-tab="${tabName}"]`);
+    if (selectedButton) {
+        selectedButton.classList.add('active');
+    }
+}
+
+// Click outside to close dropdown
+document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('mobile-dropdown');
+    const dropdownButton = event.target.closest('button[onclick="toggleMobileDropdown()"]');
+    
+    if (!dropdownButton && !dropdown.contains(event.target)) {
+        dropdown.classList.add('hidden');
+        document.getElementById('dropdown-arrow').style.transform = 'rotate(0deg)';
+    }
+});
+
 function togglePasswordVisibility(inputId) {
     const input = document.getElementById(inputId);
     
@@ -928,6 +1095,289 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <style>
+    /* Tab Styles */
+    .tab-button {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #6b7280;
+        border-bottom: 2px solid transparent;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        background: none;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .tab-button:hover {
+        color: #374151;
+        border-bottom-color: #d1d5db;
+    }
+    
+    .tab-button.active {
+        color: #3b82f6;
+        border-bottom-color: #3b82f6;
+    }
+    
+    .dark .tab-button {
+        color: #9ca3af;
+    }
+    
+    .dark .tab-button:hover {
+        color: #e5e7eb;
+        border-bottom-color: #4b5563;
+    }
+    
+    .dark .tab-button.active {
+        color: #60a5fa;
+        border-bottom-color: #60a5fa;
+    }
+    
+    .tab-content {
+        min-height: 400px;
+    }
+
+    /* Desktop Tab Navigation - Always visible */
+    @media (min-width: 769px) {
+        nav[aria-label="Tabs"] {
+            display: flex !important;
+        }
+        
+        .tab-button {
+            padding: 0.75rem 1rem;
+            font-size: 0.875rem;
+            border-bottom: 2px solid transparent;
+            border-radius: 0;
+        }
+        
+        .tab-button:hover {
+            background-color: transparent;
+            border-bottom-color: #d1d5db;
+        }
+        
+        .tab-button.active {
+            background-color: transparent;
+            border-bottom-color: #3b82f6;
+        }
+        
+        .dark .tab-button:hover {
+            background-color: transparent;
+            border-bottom-color: #4b5563;
+        }
+        
+        .dark .tab-button.active {
+            background-color: transparent;
+            border-bottom-color: #60a5fa;
+        }
+    }
+
+    /* Mobile Responsive Styles */
+    @media (max-width: 768px) {
+        /* Mobile Dropdown Styles */
+        #mobile-dropdown {
+            animation: slideDown 0.2s ease-out;
+        }
+        
+        #mobile-dropdown.hidden {
+            animation: slideUp 0.2s ease-in;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+        }
+        
+        .mobile-tab-item:active {
+            background-color: #e5e7eb;
+        }
+        
+        .dark .mobile-tab-item:active {
+            background-color: #4b5563;
+        }
+        
+        /* Grid Layout Mobile */
+        .grid.grid-cols-1.md\\:grid-cols-2 {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        
+        /* Form Controls Mobile */
+        .px-4 {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+        }
+        
+        .py-2 {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+        
+        /* Tab Content Padding */
+        .tab-content {
+            padding: 1rem !important;
+            min-height: 300px;
+        }
+        
+        /* File Input Mobile */
+        .file-input-container {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+        
+        .file-input-name {
+            margin-left: 0;
+            margin-top: 0.5rem;
+        }
+        
+        /* Button Mobile */
+        .file-input-button {
+            padding: 0.75rem 1rem;
+            width: 100%;
+            text-align: center;
+        }
+        
+        /* Image Preview Mobile */
+        .bg-gray-100.dark\\:bg-gray-700.p-2 img,
+        .bg-gray-700.p-2 img {
+            height: 2rem;
+            width: auto;
+        }
+        
+        /* Password Toggle Button Mobile */
+        .absolute.inset-y-0.right-0 {
+            padding-right: 0.5rem;
+        }
+        
+        /* Checkbox Labels Mobile */
+        label {
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+        }
+        
+        /* Textarea Mobile */
+        textarea {
+            min-height: 4rem;
+        }
+        
+        /* Submit Button Mobile */
+        .bg-blue-500.text-white.px-6.py-2 {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            margin-top: 1rem;
+        }
+        
+        /* Sitemap Priority Grid Mobile */
+        .grid.grid-cols-2.gap-2 {
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+        }
+        
+        /* Heading Mobile */
+        h1.text-3xl {
+            font-size: 1.5rem;
+            line-height: 2rem;
+        }
+        
+        h2.text-xl {
+            font-size: 1.125rem;
+            line-height: 1.75rem;
+        }
+        
+        /* Space Adjustments Mobile */
+        .space-y-6 > * + * {
+            margin-top: 1rem;
+        }
+        
+        .mt-8 {
+            margin-top: 1.5rem;
+        }
+        
+        /* Container Padding Mobile */
+        .max-w-full.mx-auto {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+    }
+    
+    /* Tablet Responsive Styles */
+    @media (min-width: 769px) and (max-width: 1024px) {
+        .tab-button {
+            padding: 0.625rem 0.875rem;
+            font-size: 0.8125rem;
+        }
+        
+        .tab-button svg {
+            width: 1.125rem;
+            height: 1.125rem;
+        }
+        
+        .tab-content {
+            padding: 1.5rem !important;
+        }
+    }
+    
+    /* Small Mobile Styles */
+    @media (max-width: 480px) {
+        /* Extra small screens */
+        nav.flex.space-x-8 {
+            flex-wrap: wrap;
+            gap: 0.25rem;
+            justify-content: center;
+        }
+        
+        .tab-button {
+            padding: 0.375rem 0.5rem;
+            font-size: 0.6875rem;
+            min-width: fit-content;
+        }
+        
+        .tab-button svg {
+            width: 0.875rem;
+            height: 0.875rem;
+        }
+        
+        .px-6 {
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+        }
+        
+        .pt-6 {
+            padding-top: 0.75rem;
+        }
+        
+        /* Form inputs smaller */
+        input, textarea, select {
+            font-size: 0.875rem;
+        }
+        
+        /* Buttons smaller */
+        .file-input-button {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+        }
+    }
+
+    /* File Input Styles */
     .file-input-container {
         position: relative;
         display: inline-flex;
