@@ -73,7 +73,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'turnstile_register',
             'turnstile_contact',
             'turnstile_article',
-            'smtp_enabled'
+            'smtp_enabled',
+            'show_site_title_with_logo'
         ];
         
         foreach ($checkbox_settings as $key) {
