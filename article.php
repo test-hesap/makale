@@ -554,23 +554,6 @@ $similar_articles = $similar_stmt->fetchAll(PDO::FETCH_ASSOC);
                         </div>
                         <?php endif; ?>
                         
-                        <?php if (!empty($article['featured_image'])): ?>
-                            <div class="featured-image mb-8">
-                                <?php
-                                // Kontrol et: Eğer URL tam bir URL ise doğrudan kullan, değilse uploads/ai_images/ dizinini ekle
-                                $imgSrc = (strpos($article['featured_image'], 'http://') === 0 || strpos($article['featured_image'], 'https://') === 0)
-                                    ? $article['featured_image'] 
-                                    : (strpos($article['featured_image'], '/') === 0 
-                                        ? $article['featured_image'] 
-                                        : "/uploads/ai_images/" . $article['featured_image']);
-                                ?>
-                                <img src="<?php echo $imgSrc; ?>" 
-                                     alt="<?php echo safeTitle($article['title']); ?>"
-                                     class="w-full h-64 md:h-80 object-cover rounded-lg shadow-lg"
-                                     loading="eager">
-                            </div>
-                        <?php endif; ?>
-                        
                         <div class="prose max-w-none article-content">
                             <!-- Makale içi üst reklam kısmı -->
                             <?php 

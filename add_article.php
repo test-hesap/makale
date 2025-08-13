@@ -313,9 +313,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">
                         <?php echo t('featured_image_url'); ?>
                     </label>
-                    <input type="text" name="featured_image"
-                           class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-white border-gray-300 dark:border-gray-600"
-                           placeholder="https://...">
+                    
+                    <!-- Resim Yükleme Sekmeli Arayüz -->
+                    <div class="border border-gray-300 dark:border-gray-600 rounded-lg">
+                        <div class="flex border-b border-gray-300 dark:border-gray-600">
+                            <button type="button" id="url-tab" class="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 dark:bg-blue-900 dark:text-blue-300 border-b-2 border-blue-600 rounded-tl-lg active-tab">
+                                URL ile
+                            </button>
+                            <button type="button" id="upload-tab" class="px-4 py-2 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 inactive-tab">
+                                Dosya Yükle
+                            </button>
+                        </div>
+                        
+                        <!-- URL Girişi -->
+                        <div id="url-content" class="p-4">
+                            <input type="text" name="featured_image" id="featured_image_url"
+                                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
+                                   placeholder="https://...">
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Resim URL'sini buraya yapıştırın</p>
+                        </div>
+                        
+                        <!-- Dosya Yükleme -->
+                        <div id="upload-content" class="p-4 hidden">
+                            <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
+                                <input type="file" id="image_upload" accept="image/*" class="hidden">
+                                <div id="upload-area" class="cursor-pointer">
+                                    <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                                    <p class="text-gray-600 dark:text-gray-400">Resim dosyasını sürükleyip bırakın veya <span class="text-blue-600 underline">dosya seçin</span></p>
+                                    <p class="text-xs text-gray-500 mt-1">Maksimum 5MB, JPG, PNG, GIF, WebP formatları desteklenir</p>
+                                </div>
+                                <div id="upload-progress" class="hidden mt-4">
+                                    <div class="bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                        <div id="progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                                    </div>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">Yükleniyor...</p>
+                                </div>
+                                <div id="upload-success" class="hidden mt-4 p-3 bg-green-100 dark:bg-green-900 border border-green-400 dark:border-green-700 rounded">
+                                    <p class="text-green-700 dark:text-green-300 text-sm">
+                                        <i class="fas fa-check-circle mr-2"></i>
+                                        Resim başarıyla yüklendi!
+                                    </p>
+                                </div>
+                                <div id="upload-error" class="hidden mt-4 p-3 bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 rounded">
+                                    <p class="text-red-700 dark:text-red-300 text-sm">
+                                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                                        <span id="error-message">Yükleme hatası!</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>                <?php if (isAdmin()): ?>
                 <div>
                     <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">
@@ -397,6 +444,160 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             console.error('TinyMCE editör bulunamadı!');
                         }
                     });
+                </script>
+
+                <!-- Resim Yükleme JavaScript'i -->
+                <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Sekme değiştirme
+                    const urlTab = document.getElementById('url-tab');
+                    const uploadTab = document.getElementById('upload-tab');
+                    const urlContent = document.getElementById('url-content');
+                    const uploadContent = document.getElementById('upload-content');
+                    
+                    urlTab.addEventListener('click', function() {
+                        // URL sekmesini aktif yap
+                        urlTab.className = 'px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 dark:bg-blue-900 dark:text-blue-300 border-b-2 border-blue-600 active-tab';
+                        uploadTab.className = 'px-4 py-2 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 inactive-tab';
+                        urlContent.classList.remove('hidden');
+                        uploadContent.classList.add('hidden');
+                    });
+                    
+                    uploadTab.addEventListener('click', function() {
+                        // Upload sekmesini aktif yap
+                        uploadTab.className = 'px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 dark:bg-blue-900 dark:text-blue-300 border-b-2 border-blue-600 active-tab';
+                        urlTab.className = 'px-4 py-2 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 inactive-tab';
+                        uploadContent.classList.remove('hidden');
+                        urlContent.classList.add('hidden');
+                    });
+                    
+                    // Dosya yükleme
+                    const fileInput = document.getElementById('image_upload');
+                    const uploadArea = document.getElementById('upload-area');
+                    const progressDiv = document.getElementById('upload-progress');
+                    const progressBar = document.getElementById('progress-bar');
+                    const successDiv = document.getElementById('upload-success');
+                    const errorDiv = document.getElementById('upload-error');
+                    const errorMessage = document.getElementById('error-message');
+                    const featuredImageInput = document.getElementById('featured_image_url');
+                    
+                    // Upload alanına tıklama
+                    uploadArea.addEventListener('click', function() {
+                        fileInput.click();
+                    });
+                    
+                    // Drag & Drop
+                    uploadArea.addEventListener('dragover', function(e) {
+                        e.preventDefault();
+                        uploadArea.classList.add('border-blue-400', 'bg-blue-50');
+                    });
+                    
+                    uploadArea.addEventListener('dragleave', function(e) {
+                        e.preventDefault();
+                        uploadArea.classList.remove('border-blue-400', 'bg-blue-50');
+                    });
+                    
+                    uploadArea.addEventListener('drop', function(e) {
+                        e.preventDefault();
+                        uploadArea.classList.remove('border-blue-400', 'bg-blue-50');
+                        
+                        const files = e.dataTransfer.files;
+                        if (files.length > 0) {
+                            handleFileUpload(files[0]);
+                        }
+                    });
+                    
+                    // Dosya seçimi
+                    fileInput.addEventListener('change', function(e) {
+                        if (e.target.files.length > 0) {
+                            handleFileUpload(e.target.files[0]);
+                        }
+                    });
+                    
+                    function handleFileUpload(file) {
+                        // Durumları sıfırla
+                        successDiv.classList.add('hidden');
+                        errorDiv.classList.add('hidden');
+                        progressDiv.classList.remove('hidden');
+                        progressBar.style.width = '0%';
+                        
+                        // Dosya kontrolü
+                        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+                        if (!allowedTypes.includes(file.type)) {
+                            showError('Geçersiz dosya türü. Sadece JPG, PNG, GIF ve WebP dosyaları kabul edilir.');
+                            return;
+                        }
+                        
+                        if (file.size > 5 * 1024 * 1024) { // 5MB
+                            showError('Dosya boyutu çok büyük. Maksimum 5MB olmalıdır.');
+                            return;
+                        }
+                        
+                        // FormData oluştur
+                        const formData = new FormData();
+                        formData.append('image', file);
+                        
+                        // CSRF token ekle (varsa)
+                        <?php if (isset($_SESSION['csrf_token'])): ?>
+                        formData.append('csrf_token', '<?php echo $_SESSION['csrf_token']; ?>');
+                        <?php endif; ?>
+                        
+                        // XMLHttpRequest ile yükle
+                        const xhr = new XMLHttpRequest();
+                        
+                        xhr.upload.addEventListener('progress', function(e) {
+                            if (e.lengthComputable) {
+                                const percentComplete = (e.loaded / e.total) * 100;
+                                progressBar.style.width = percentComplete + '%';
+                            }
+                        });
+                        
+                        xhr.addEventListener('load', function() {
+                            progressDiv.classList.add('hidden');
+                            
+                            if (xhr.status === 200) {
+                                try {
+                                    const response = JSON.parse(xhr.responseText);
+                                    if (response.success) {
+                                        // Başarılı yükleme
+                                        featuredImageInput.value = response.file_url;
+                                        successDiv.classList.remove('hidden');
+                                        
+                                        // 3 saniye sonra başarı mesajını gizle
+                                        setTimeout(function() {
+                                            successDiv.classList.add('hidden');
+                                        }, 3000);
+                                    } else {
+                                        showError(response.message || 'Yükleme başarısız');
+                                    }
+                                } catch (e) {
+                                    showError('Sunucu yanıtı işlenirken hata oluştu');
+                                }
+                            } else {
+                                showError('Sunucu hatası: ' + xhr.status);
+                            }
+                        });
+                        
+                        xhr.addEventListener('error', function() {
+                            progressDiv.classList.add('hidden');
+                            showError('Ağ hatası oluştu');
+                        });
+                        
+                        xhr.open('POST', '/includes/image_upload.php');
+                        xhr.send(formData);
+                    }
+                    
+                    function showError(message) {
+                        progressDiv.classList.add('hidden');
+                        errorMessage.textContent = message;
+                        errorDiv.classList.remove('hidden');
+                        
+                        // 5 saniye sonra hata mesajını gizle
+                        setTimeout(function() {
+                            errorDiv.classList.add('hidden');
+                        }, 5000);
+                    }
+                });
                 </script>
             </form>
         </div>

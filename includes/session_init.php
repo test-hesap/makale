@@ -163,4 +163,9 @@ if (isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])) {
     // Bot kontrolü ve izlemesi yap
     trackBots();
 }
+
+// CSRF token oluştur (oturum başlatıldıktan sonra)
+if (!isset($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
 ?>

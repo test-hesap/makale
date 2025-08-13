@@ -62,6 +62,7 @@ class AIArticleImageManager {
     public function downloadImagesForArticle($category, $topic, $title) {
         $images = [];
         $maxRetries = 3; // Bir resim için maksimum deneme sayısı
+        $usedImageIds = []; // Kullanılan resim ID'lerini takip et
         
         try {
             // Arama sorguları için metin hazırlama
@@ -114,16 +115,20 @@ class AIArticleImageManager {
                     }
                 }
                 
-                $coverImage = $this->searchAndDownloadImage($coverQuery, $searchQueries['category'], 'cover');
+                $coverImage = $this->searchAndDownloadImage($coverQuery, $searchQueries['category'], 'cover', $usedImageIds);
                 $retryCount++;
             }
             
             if ($coverImage) {
                 $images['cover'] = $coverImage;
+                // Kullanılan resim ID'sini kaydet
+                if (is_array($coverImage) && isset($coverImage['id'])) {
+                    $usedImageIds[] = $coverImage['id'];
+                }
                 $this->log("Kapak resmi indirildi. Sorgu: $coverQuery");
             }
             
-            // İçerik resmi 1 - spesifik konu detayı kullan
+            // İçerik resmi 1 - spesifik konu detayı kullan (kapak resminden farklı olmalı)
             $contentQuery1 = $searchQueries['specific'];
             $contentImage1 = null;
             $retryCount = 0;
@@ -138,16 +143,20 @@ class AIArticleImageManager {
                     }
                 }
                 
-                $contentImage1 = $this->searchAndDownloadImage($contentQuery1, $searchQueries['topic'], 'content_1');
+                $contentImage1 = $this->searchAndDownloadImage($contentQuery1, $searchQueries['topic'], 'content_1', $usedImageIds);
                 $retryCount++;
             }
             
             if ($contentImage1) {
                 $images['content_1'] = $contentImage1;
+                // Kullanılan resim ID'sini kaydet
+                if (is_array($contentImage1) && isset($contentImage1['id'])) {
+                    $usedImageIds[] = $contentImage1['id'];
+                }
                 $this->log("İçerik resmi 1 indirildi. Sorgu: $contentQuery1");
             }
             
-            // İçerik resmi 2 - başlıktan anahtar kelime kullan
+            // İçerik resmi 2 - başlıktan anahtar kelime kullan (diğer resimlerden farklı olmalı)
             $contentQuery2 = count($titleWords) > 0 ? 
                 $this->translateQuery($titleWords[array_rand($titleWords)]) . ' ' . $searchQueries['category'] : 
                 $searchQueries['topic'];
@@ -165,12 +174,16 @@ class AIArticleImageManager {
                     }
                 }
                 
-                $contentImage2 = $this->searchAndDownloadImage($contentQuery2, $searchQueries['combined'], 'content_2');
+                $contentImage2 = $this->searchAndDownloadImage($contentQuery2, $searchQueries['combined'], 'content_2', $usedImageIds);
                 $retryCount++;
             }
             
             if ($contentImage2) {
                 $images['content_2'] = $contentImage2;
+                // Kullanılan resim ID'sini kaydet
+                if (is_array($contentImage2) && isset($contentImage2['id'])) {
+                    $usedImageIds[] = $contentImage2['id'];
+                }
                 $this->log("İçerik resmi 2 indirildi. Sorgu: $contentQuery2");
             }
             
@@ -232,9 +245,9 @@ class AIArticleImageManager {
     /**
      * Unsplash'dan resim arar ve indirir
      */
-    private function searchAndDownloadImage($query, $fallbackQuery, $type) {
+    private function searchAndDownloadImage($query, $fallbackQuery, $type, &$usedImageIds = []) {
         if (empty($this->unsplashAccessKey)) {
-            return $this->searchGoogleImages($query, $fallbackQuery, $type);
+            return $this->searchGoogleImages($query, $fallbackQuery, $type, $usedImageIds);
         }
         
         try {
@@ -269,12 +282,31 @@ class AIArticleImageManager {
                 $resultCount = count($results);
                 $this->log("Unsplash Türkçe sorgu " . $resultCount . " sonuç döndürdü");
                 
-                // En alakalı sonuçları önceliklendirmek için ilk 5 sonuç (varsa) arasından seç
-                $selectionRange = min(5, $resultCount);
-                $selectedIndex = mt_rand(0, $selectionRange - 1);
-                $photo = $results[$selectedIndex];
+                // Kullanılmamış resim bul
+                $photo = null;
+                $attempts = 0;
+                $maxAttempts = min(10, $resultCount); // En fazla 10 sonuç dene
                 
-                return $this->downloadImage($photo['urls']['regular'], $type, $photo['id']);
+                while ($photo === null && $attempts < $maxAttempts) {
+                    $selectedIndex = mt_rand(0, min(5, $resultCount) - 1); // İlk 5 sonuç arasından seç
+                    $candidate = $results[$selectedIndex];
+                    
+                    // Bu resim daha önce kullanılmış mı kontrol et
+                    if (!in_array($candidate['id'], $usedImageIds)) {
+                        $photo = $candidate;
+                        $this->log("Benzersiz resim bulundu: " . $photo['id']);
+                    } else {
+                        $this->log("Resim daha önce kullanılmış, başka resim aranıyor: " . $candidate['id']);
+                        // Kullanılmış resmi sonuçlardan çıkar
+                        array_splice($results, $selectedIndex, 1);
+                        $resultCount--;
+                    }
+                    $attempts++;
+                }
+                
+                if ($photo !== null) {
+                    return $this->downloadImage($photo['urls']['regular'], $type, $photo['id']);
+                }
             } else {
                 $this->log("Unsplash Türkçe sorgu sonuç bulunamadı, İngilizce çeviri deneniyor");
                 
@@ -301,11 +333,29 @@ class AIArticleImageManager {
                     $resultCount = count($results);
                     $this->log("Unsplash İngilizce sorgu " . $resultCount . " sonuç döndürdü");
                     
-                    $selectionRange = min(5, $resultCount);
-                    $selectedIndex = mt_rand(0, $selectionRange - 1);
-                    $photo = $results[$selectedIndex];
+                    // Kullanılmamış resim bul
+                    $photo = null;
+                    $attempts = 0;
+                    $maxAttempts = min(10, $resultCount);
                     
-                    return $this->downloadImage($photo['urls']['regular'], $type, $photo['id']);
+                    while ($photo === null && $attempts < $maxAttempts) {
+                        $selectedIndex = mt_rand(0, min(5, $resultCount) - 1);
+                        $candidate = $results[$selectedIndex];
+                        
+                        if (!in_array($candidate['id'], $usedImageIds)) {
+                            $photo = $candidate;
+                            $this->log("İngilizce sorguda benzersiz resim bulundu: " . $photo['id']);
+                        } else {
+                            $this->log("İngilizce sorguda resim daha önce kullanılmış: " . $candidate['id']);
+                            array_splice($results, $selectedIndex, 1);
+                            $resultCount--;
+                        }
+                        $attempts++;
+                    }
+                    
+                    if ($photo !== null) {
+                        return $this->downloadImage($photo['urls']['regular'], $type, $photo['id']);
+                    }
                 }
                 
                 // Fallback sorgu ile tekrar dene
@@ -335,10 +385,29 @@ class AIArticleImageManager {
                         $resultCount = count($results);
                         $this->log("Türkçe fallback " . $resultCount . " sonuç döndürdü");
                         
-                        $selectedIndex = mt_rand(0, $resultCount - 1);
-                        $photo = $results[$selectedIndex];
+                        // Kullanılmamış resim bul
+                        $photo = null;
+                        $attempts = 0;
+                        $maxAttempts = min(10, $resultCount);
                         
-                        return $this->downloadImage($photo['urls']['regular'], $type, $photo['id']);
+                        while ($photo === null && $attempts < $maxAttempts) {
+                            $selectedIndex = mt_rand(0, $resultCount - 1);
+                            $candidate = $results[$selectedIndex];
+                            
+                            if (!in_array($candidate['id'], $usedImageIds)) {
+                                $photo = $candidate;
+                                $this->log("Türkçe fallback'ta benzersiz resim bulundu: " . $photo['id']);
+                            } else {
+                                $this->log("Türkçe fallback'ta resim daha önce kullanılmış: " . $candidate['id']);
+                                array_splice($results, $selectedIndex, 1);
+                                $resultCount--;
+                            }
+                            $attempts++;
+                        }
+                        
+                        if ($photo !== null) {
+                            return $this->downloadImage($photo['urls']['regular'], $type, $photo['id']);
+                        }
                     }
                     
                     // İngilizce fallback dene
@@ -363,10 +432,29 @@ class AIArticleImageManager {
                         $resultCount = count($results);
                         $this->log("İngilizce fallback " . $resultCount . " sonuç döndürdü");
                         
-                        $selectedIndex = mt_rand(0, $resultCount - 1);
-                        $photo = $results[$selectedIndex];
+                        // Kullanılmamış resim bul
+                        $photo = null;
+                        $attempts = 0;
+                        $maxAttempts = min(10, $resultCount);
                         
-                        return $this->downloadImage($photo['urls']['regular'], $type, $photo['id']);
+                        while ($photo === null && $attempts < $maxAttempts) {
+                            $selectedIndex = mt_rand(0, $resultCount - 1);
+                            $candidate = $results[$selectedIndex];
+                            
+                            if (!in_array($candidate['id'], $usedImageIds)) {
+                                $photo = $candidate;
+                                $this->log("İngilizce fallback'ta benzersiz resim bulundu: " . $photo['id']);
+                            } else {
+                                $this->log("İngilizce fallback'ta resim daha önce kullanılmış: " . $candidate['id']);
+                                array_splice($results, $selectedIndex, 1);
+                                $resultCount--;
+                            }
+                            $attempts++;
+                        }
+                        
+                        if ($photo !== null) {
+                            return $this->downloadImage($photo['urls']['regular'], $type, $photo['id']);
+                        }
                     }
                 }
             }
@@ -376,13 +464,13 @@ class AIArticleImageManager {
         }
         
         // Unsplash başarısız olursa Google'a geç
-        return $this->searchGoogleImages($query, $fallbackQuery, $type);
+        return $this->searchGoogleImages($query, $fallbackQuery, $type, $usedImageIds);
     }
     
     /**
      * Google Custom Search ile resim arar
      */
-    private function searchGoogleImages($query, $fallbackQuery, $type) {
+    private function searchGoogleImages($query, $fallbackQuery, $type, &$usedImageIds = []) {
         if (empty($this->searchApiKey) || empty($this->searchEngineId)) {
             return $this->useStockImage($type);
         }
@@ -643,7 +731,8 @@ class AIArticleImageManager {
                 'path' => $optimizedPath,
                 'url' => '/uploads/ai_images/' . basename($optimizedPath),
                 'type' => $type, // Tip bilgisini geri döndürürken yine saklıyoruz (API için gerekebilir)
-                'size' => $fileSize
+                'size' => $fileSize,
+                'id' => $identifier // Resim ID'sini de ekliyoruz
             ];
             
         } catch (Exception $e) {

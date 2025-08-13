@@ -41,6 +41,61 @@ $currentPage = basename($_SERVER['PHP_SELF']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo t('admin_panel'); ?></title>
+    
+    <!-- FOUC (Flash of Unstyled Content) önleme - Koyu mod için -->
+    <script>
+        // Sayfa yüklenmeden önce tema durumunu kontrol et ve uygula
+        (function() {
+            const userTheme = localStorage.getItem('theme');
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            if (userTheme === 'dark' || (!userTheme && systemPrefersDark)) {
+                document.documentElement.classList.add('dark');
+                // Body için de anlık stil uygula
+                document.documentElement.style.backgroundColor = '#1a1a1a';
+                document.documentElement.style.color = '#e0e0e0';
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.documentElement.style.backgroundColor = '#f9fafb';
+                document.documentElement.style.color = '#111827';
+            }
+        })();
+    </script>
+    
+    <!-- CSS stilleri en üstte yükle -->
+    <style>
+        /* Anlık yükleme için kritik CSS */
+        html.dark {
+            background-color: #1a1a1a !important;
+            color: #e0e0e0 !important;
+        }
+        
+        html:not(.dark) {
+            background-color: #f9fafb !important;
+            color: #111827 !important;
+        }
+        
+        /* Body için de aynı stilleri uygula */
+        html.dark body {
+            background-color: #1a1a1a !important;
+            color: #e0e0e0 !important;
+        }
+        
+        html:not(.dark) body {
+            background-color: #f9fafb !important;
+            color: #111827 !important;
+        }
+        
+        /* Sayfa yüklenirken gizleme */
+        .admin-content {
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        .admin-content.loaded {
+            opacity: 1;
+        }
+    </style>
     <?php
     // Favicon ekle
     $favicon = getSetting('favicon');
@@ -73,18 +128,27 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         /* Alpine.js için x-cloak stilleri */
         [x-cloak] { display: none !important; }
         
-        /* Koyu tema stilleri */
+        /* Geçiş animasyonları */
+        * {
+            transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+        }
+        
+        /* Koyu tema stilleri - daha spesifik seçiciler */
         .dark body {
-            background-color: #1a1a1a;
-            color: #e0e0e0;
+            background-color: #1a1a1a !important;
+            color: #e0e0e0 !important;
         }
         
         .dark .bg-white {
-            background-color: #2a2a2a;
+            background-color: #2a2a2a !important;
         }
         
         .dark .bg-gray-100 {
-            background-color: #1a1a1a;
+            background-color: #1a1a1a !important;
+        }
+        
+        .dark .bg-gray-50 {
+            background-color: #374151 !important;
         }
         
         .dark .text-gray-500,
@@ -92,34 +156,34 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         .dark .text-gray-700,
         .dark .text-gray-800,
         .dark .text-gray-900 {
-            color: #e0e0e0;
+            color: #e0e0e0 !important;
         }
         
         .dark .shadow-sm,
         .dark .shadow-lg,
         .dark .shadow-md {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
         }
         
         .dark .border,
         .dark .border-gray-200 {
-            border-color: #3a3a3a;
+            border-color: #3a3a3a !important;
         }
         
         .dark .hover\:bg-gray-100:hover {
-            background-color: #333333;
+            background-color: #333333 !important;
         }
         
         .dark a.hover\:text-red-900:hover {
-            color: #ffcdd2;
+            color: #ffcdd2 !important;
         }
         
         .dark a.text-red-600 {
-            color: #ef9a9a;
+            color: #ef9a9a !important;
         }
         
         .dark .hover\:text-gray-900:hover {
-            color: #ffffff;
+            color: #ffffff !important;
         }
         
         /* Menü açılır kapanır animasyonları */
@@ -176,7 +240,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         }
     </style>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900">
+<body class="bg-gray-100 dark:bg-gray-900 admin-content">
     <div class="flex h-screen" x-data="{ sidebarOpen: false }">
         <?php include 'sidebar.php'; ?>
         

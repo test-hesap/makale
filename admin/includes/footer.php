@@ -27,39 +27,75 @@
             // Karanlık temadan aydınlık temaya geçiş
             document.documentElement.classList.remove('dark');
             localStorage.setItem('theme', 'light');
-            document.getElementById('theme-toggle-dark-icon').classList.add('hidden');
-            document.getElementById('theme-toggle-light-icon').classList.remove('hidden');
+            document.documentElement.style.backgroundColor = '#f9fafb';
+            document.documentElement.style.color = '#111827';
         } else {
             // Aydınlık temadan karanlık temaya geçiş
             document.documentElement.classList.add('dark');
             localStorage.setItem('theme', 'dark');
-            document.getElementById('theme-toggle-light-icon').classList.add('hidden');
-            document.getElementById('theme-toggle-dark-icon').classList.remove('hidden');
+            document.documentElement.style.backgroundColor = '#1a1a1a';
+            document.documentElement.style.color = '#e0e0e0';
         }
+        
+        // İkon durumunu güncelle
+        updateThemeDisplay();
     }
     
     // DOM yüklendiğinde çalışacak kodlar
     document.addEventListener('DOMContentLoaded', function() {
+        // Sayfa yüklendiğinde fade-in efekti
+        const adminContent = document.querySelector('.admin-content');
+        if (adminContent) {
+            adminContent.classList.add('loaded');
+        }
+        
         // Tema değiştirme butonunu ayarla
         const themeToggleBtn = document.getElementById('theme-toggle');
         if (themeToggleBtn) {
             themeToggleBtn.addEventListener('click', toggleTheme);
         }
         
-        // Kullanıcının tema tercihini al
+        // Kullanıcının tema tercihini al ve güncelle
+        updateThemeDisplay();
+        
+        // Sistem tema tercihini dinle
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        mediaQuery.addListener(function(e) {
+            // Sadece kullanıcı manuel bir tema seçmemişse sistem temasını uygula
+            if (!localStorage.getItem('theme')) {
+                updateThemeDisplay();
+            }
+        });
+    });
+    
+    // Tema görünümünü güncelle
+    function updateThemeDisplay() {
         const userTheme = localStorage.getItem('theme');
         const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         
         // Tema tercihine göre ayarla
         if (userTheme === 'dark' || (!userTheme && systemPrefersDark)) {
             document.documentElement.classList.add('dark');
-            document.getElementById('theme-toggle-light-icon').classList.add('hidden');
-            document.getElementById('theme-toggle-dark-icon').classList.remove('hidden');
+            document.documentElement.style.backgroundColor = '#1a1a1a';
+            document.documentElement.style.color = '#e0e0e0';
+            if (document.getElementById('theme-toggle-light-icon')) {
+                document.getElementById('theme-toggle-light-icon').classList.add('hidden');
+            }
+            if (document.getElementById('theme-toggle-dark-icon')) {
+                document.getElementById('theme-toggle-dark-icon').classList.remove('hidden');
+            }
         } else {
             document.documentElement.classList.remove('dark');
-            document.getElementById('theme-toggle-dark-icon').classList.add('hidden');
-            document.getElementById('theme-toggle-light-icon').classList.remove('hidden');
-        }    });
+            document.documentElement.style.backgroundColor = '#f9fafb';
+            document.documentElement.style.color = '#111827';
+            if (document.getElementById('theme-toggle-dark-icon')) {
+                document.getElementById('theme-toggle-dark-icon').classList.add('hidden');
+            }
+            if (document.getElementById('theme-toggle-light-icon')) {
+                document.getElementById('theme-toggle-light-icon').classList.remove('hidden');
+            }
+        }
+    }
     
     // Mobil menü kontrolü - tıklandığında sidebar'ı kapat
     document.addEventListener('click', function(e) {

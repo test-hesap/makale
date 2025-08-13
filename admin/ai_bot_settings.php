@@ -106,7 +106,7 @@ include 'includes/header.php';
         </div>
     <?php endif; ?>
 
-    <form method="POST" class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+    <form method="POST" class="bg-white dark:bg-gray-800 rounded-lg shadow p-6" autocomplete="off">
         <div class="space-y-6">
             <!-- Genel Ayarlar -->
             <div class="border-b border-gray-200 dark:border-gray-700 pb-4">
@@ -147,7 +147,7 @@ include 'includes/header.php';
                         <div class="relative">
                             <input type="password" id="gemini_api_key" name="gemini_api_key" value="<?php echo htmlspecialchars($currentSettings['gemini_api_key']); ?>" 
                                    class="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-200"
-                                   placeholder="<?php echo __('admin_enter_gemini_api_key'); ?>">
+                                   placeholder="<?php echo __('admin_enter_gemini_api_key'); ?>" autocomplete="off">
                             <button type="button" onclick="togglePasswordVisibility('gemini_api_key')" 
                                     class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 text-gray-500 dark:text-gray-400">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -168,7 +168,7 @@ include 'includes/header.php';
                         <div class="relative">
                             <input type="password" id="grok_api_key" name="grok_api_key" value="<?php echo htmlspecialchars($currentSettings['grok_api_key']); ?>" 
                                    class="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-200"
-                                   placeholder="<?php echo __('admin_enter_grok_api_key'); ?>">
+                                   placeholder="<?php echo __('admin_enter_grok_api_key'); ?>" autocomplete="off">
                             <button type="button" onclick="togglePasswordVisibility('grok_api_key')" 
                                     class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 text-gray-500 dark:text-gray-400">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -189,7 +189,7 @@ include 'includes/header.php';
                         <div class="relative">
                             <input type="password" id="huggingface_api_key" name="huggingface_api_key" value="<?php echo htmlspecialchars($currentSettings['huggingface_api_key']); ?>" 
                                    class="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-200"
-                                   placeholder="<?php echo __('admin_enter_hugging_face_api_key'); ?>">
+                                   placeholder="<?php echo __('admin_enter_hugging_face_api_key'); ?>" autocomplete="off">
                             <button type="button" onclick="togglePasswordVisibility('huggingface_api_key')" 
                                     class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 text-gray-500 dark:text-gray-400">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -219,7 +219,7 @@ include 'includes/header.php';
                         <div class="relative">
                             <input type="password" id="google_search_api_key" name="google_search_api_key" value="<?php echo htmlspecialchars($currentSettings['google_search_api_key']); ?>" 
                                    class="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-200"
-                                   placeholder="<?php echo __('admin_enter_google_search_api_key'); ?>">
+                                   placeholder="<?php echo __('admin_enter_google_search_api_key'); ?>" autocomplete="off">
                             <button type="button" onclick="togglePasswordVisibility('google_search_api_key')" 
                                     class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 text-gray-500 dark:text-gray-400">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -240,7 +240,7 @@ include 'includes/header.php';
                         <div class="relative">
                             <input type="password" id="google_search_engine_id" name="google_search_engine_id" value="<?php echo htmlspecialchars($currentSettings['google_search_engine_id']); ?>" 
                                    class="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-200"
-                                   placeholder="<?php echo __('admin_enter_google_search_engine_id'); ?>">
+                                   placeholder="<?php echo __('admin_enter_google_search_engine_id'); ?>" autocomplete="off">
                             <button type="button" onclick="togglePasswordVisibility('google_search_engine_id')" 
                                     class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 text-gray-500 dark:text-gray-400">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -261,7 +261,7 @@ include 'includes/header.php';
                         <div class="relative">
                             <input type="password" id="unsplash_access_key" name="unsplash_access_key" value="<?php echo htmlspecialchars($currentSettings['unsplash_access_key']); ?>" 
                                    class="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-200"
-                                   placeholder="<?php echo __('admin_enter_unsplash_access_key'); ?>">
+                                   placeholder="<?php echo __('admin_enter_unsplash_access_key'); ?>" autocomplete="off">
                             <button type="button" onclick="togglePasswordVisibility('unsplash_access_key')" 
                                     class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 text-gray-500 dark:text-gray-400">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">

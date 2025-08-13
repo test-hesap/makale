@@ -19,7 +19,42 @@ error_log("Admin sidebar: Avatar dosyası - $avatar_path - " . (file_exists($ava
     class="sidebar-fixed bg-gray-800 text-white dark:bg-gray-900 dark:text-white transform top-0 left-0 md:relative md:translate-x-0 fixed h-full z-40 transition-transform duration-300 ease-in-out flex flex-col"
     :class="{'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen}"
     x-cloak
->    <div class="p-6">
+    style="background-color: #292929 !important;"
+>
+    <style>
+        :root {
+            --sidebar-bg: #292929;
+            --sidebar-hover: #3a3a3a;
+            --sidebar-active: #1f1f1f;
+            --sidebar-text: #ffffff;
+            --sidebar-text-muted: #d1d5db;
+        }
+        
+        .dark {
+            --sidebar-bg: #292929;
+            --sidebar-hover: #3a3a3a;
+            --sidebar-active: #1f1f1f;
+            --sidebar-text: #e0e0e0;
+            --sidebar-text-muted: #9ca3af;
+        }
+        
+        .sidebar-fixed {
+            background-color: var(--sidebar-bg) !important;
+            color: var(--sidebar-text) !important;
+        }
+        
+        .sidebar-fixed .menu-item-hover:hover {
+            background-color: var(--sidebar-hover) !important;
+        }
+        
+        .sidebar-fixed .menu-item-active {
+            background-color: var(--sidebar-active) !important;
+        }
+        
+        .sidebar-fixed .text-gray-300 {
+            color: var(--sidebar-text-muted) !important;
+        }
+    </style>    <div class="p-6">
         <div class="flex items-center justify-between mb-4">
             <div class="flex items-center space-x-3">
                 <img src="<?php echo $avatar_url; ?>" alt="<?php echo $username; ?>" class="w-10 h-10 rounded-full object-cover" onerror="this.src='/assets/img/default-avatar.jpg'">
@@ -44,14 +79,14 @@ error_log("Admin sidebar: Avatar dosyası - $avatar_path - " . (file_exists($ava
         paymentOpen: <?php echo ($current_page === 'payments') ? 'true' : 'false'; ?>
     }">
         <!-- Dashboard -->
-        <a href="index.php" class="flex items-center px-6 py-3 menu-item-stable <?php echo $current_page === 'index' ? 'bg-gray-900' : 'hover:bg-gray-700'; ?>">
+        <a href="index.php" class="flex items-center px-6 py-3 menu-item-stable menu-item-hover <?php echo $current_page === 'index' ? 'menu-item-active' : ''; ?>">
             <i class="fas fa-tachometer-alt mr-3"></i>
             <?php echo t('admin_dashboard'); ?>
         </a>
 
         <!-- İçerik Yönetimi -->
         <div class="mt-2">
-            <button @click="contentOpen = !contentOpen" class="flex items-center justify-between w-full px-6 py-3 text-left hover:bg-gray-700 focus:outline-none menu-item-stable">
+            <button @click="contentOpen = !contentOpen" class="flex items-center justify-between w-full px-6 py-3 text-left menu-item-hover focus:outline-none menu-item-stable">
                 <div class="flex items-center">
                     <i class="fas fa-file-alt mr-3"></i>
                     <?php echo t('admin_content_management'); ?>
@@ -67,35 +102,35 @@ error_log("Admin sidebar: Avatar dosyası - $avatar_path - " . (file_exists($ava
                  x-transition:leave-start="opacity-100 transform translate-y-0" 
                  x-transition:leave-end="opacity-0 transform -translate-y-2" 
                  class="ml-6">
-                <a href="articles.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable <?php echo $current_page === 'articles' ? 'active bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'; ?>">
+                <a href="articles.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable menu-item-hover <?php echo $current_page === 'articles' ? 'menu-item-active text-white' : 'text-gray-300'; ?>">
                     <i class="fas fa-newspaper mr-3"></i>
                     <?php echo t('admin_articles'); ?>
                 </a>
-                <a href="categories.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable <?php echo $current_page === 'categories' ? 'active bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'; ?>">
+                <a href="categories.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable menu-item-hover <?php echo $current_page === 'categories' ? 'menu-item-active text-white' : 'text-gray-300'; ?>">
                     <i class="fas fa-folder mr-3"></i>
                     <?php echo t('admin_categories'); ?>
                 </a>
-                <a href="comments.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable <?php echo $current_page === 'comments' ? 'active bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'; ?>">
+                <a href="comments.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable menu-item-hover <?php echo $current_page === 'comments' ? 'menu-item-active text-white' : 'text-gray-300'; ?>">
                     <i class="fas fa-comments mr-3"></i>
                     <?php echo t('admin_comments'); ?>
                 </a>
-                <a href="article_view_settings.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable <?php echo $current_page === 'article_view_settings' ? 'active bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'; ?>">
+                <a href="article_view_settings.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable menu-item-hover <?php echo $current_page === 'article_view_settings' ? 'menu-item-active text-white' : 'text-gray-300'; ?>">
                     <i class="fas fa-th-large mr-3"></i>
                     <?php echo t('admin_article_view'); ?>
                 </a>
-                <a href="headlines.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable <?php echo $current_page === 'headlines' ? 'active bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'; ?>">
+                <a href="headlines.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable menu-item-hover <?php echo $current_page === 'headlines' ? 'menu-item-active text-white' : 'text-gray-300'; ?>">
                     <i class="fas fa-newspaper mr-3"></i>
                     <?php echo t('admin_article_headlines'); ?>
                 </a>
-                <a href="ai_article_bot.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable <?php echo $current_page === 'ai_article_bot' ? 'active bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'; ?>">
+                <a href="ai_article_bot.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable menu-item-hover <?php echo $current_page === 'ai_article_bot' ? 'menu-item-active text-white' : 'text-gray-300'; ?>">
                     <i class="fas fa-robot mr-3"></i>
                     <?php echo t('admin_article_ai'); ?>
                 </a>
-                <a href="ai_bot_settings.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable <?php echo $current_page === 'ai_bot_settings' ? 'active bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'; ?>">
+                <a href="ai_bot_settings.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable menu-item-hover <?php echo $current_page === 'ai_bot_settings' ? 'menu-item-active text-white' : 'text-gray-300'; ?>">
                     <i class="fas fa-key mr-3"></i>
                     <?php echo t('admin_ai_settings'); ?>
                 </a>
-                <a href="editor_api.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable <?php echo $current_page === 'editor_api' ? 'active bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'; ?>">
+                <a href="editor_api.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable menu-item-hover <?php echo $current_page === 'editor_api' ? 'menu-item-active text-white' : 'text-gray-300'; ?>">
                     <i class="fas fa-edit mr-3"></i>
                     <?php echo t('admin_editor_api'); ?>
                 </a>
@@ -104,7 +139,7 @@ error_log("Admin sidebar: Avatar dosyası - $avatar_path - " . (file_exists($ava
 
         <!-- Kullanıcı Yönetimi -->
         <div class="mt-2">
-            <button @click="usersOpen = !usersOpen" class="flex items-center justify-between w-full px-6 py-3 text-left hover:bg-gray-700 focus:outline-none menu-item-stable">
+            <button @click="usersOpen = !usersOpen" class="flex items-center justify-between w-full px-6 py-3 text-left menu-item-hover focus:outline-none menu-item-stable">
                 <div class="flex items-center">
                     <i class="fas fa-users mr-3"></i>
                     <?php echo t('admin_user_management'); ?>
@@ -120,31 +155,31 @@ error_log("Admin sidebar: Avatar dosyası - $avatar_path - " . (file_exists($ava
                  x-transition:leave-start="opacity-100 transform translate-y-0" 
                  x-transition:leave-end="opacity-0 transform -translate-y-2" 
                  class="ml-6">
-                <a href="users.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable <?php echo $current_page === 'users' ? 'active bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'; ?>">
+                <a href="users.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable menu-item-hover <?php echo $current_page === 'users' ? 'menu-item-active text-white' : 'text-gray-300'; ?>">
                     <i class="fas fa-user mr-3"></i>
                     <?php echo t('admin_users'); ?>
                 </a>
-                <a href="ban_users.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable <?php echo $current_page === 'ban_users' ? 'active bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'; ?>">
+                <a href="ban_users.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable menu-item-hover <?php echo $current_page === 'ban_users' ? 'menu-item-active text-white' : 'text-gray-300'; ?>">
                     <i class="fas fa-ban mr-3"></i>
                     <?php echo t('admin_ban_users'); ?>
                 </a>
-                <a href="banned_users.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable <?php echo $current_page === 'banned_users' ? 'active bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'; ?>">
+                <a href="banned_users.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable menu-item-hover <?php echo $current_page === 'banned_users' ? 'menu-item-active text-white' : 'text-gray-300'; ?>">
                     <i class="fas fa-user-slash mr-3"></i>
                     <?php echo t('admin_banned_users'); ?>
                 </a>
-                <a href="subscriptions.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable <?php echo $current_page === 'subscriptions' ? 'active bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'; ?>">
+                <a href="subscriptions.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable menu-item-hover <?php echo $current_page === 'subscriptions' ? 'menu-item-active text-white' : 'text-gray-300'; ?>">
                     <i class="fas fa-star mr-3"></i>
                     <?php echo t('admin_subscriptions'); ?>
                 </a>
-                <a href="premium_manager.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable <?php echo $current_page === 'premium_manager' ? 'active bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'; ?>">
+                <a href="premium_manager.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable menu-item-hover <?php echo $current_page === 'premium_manager' ? 'menu-item-active text-white' : 'text-gray-300'; ?>">
                     <i class="fas fa-crown mr-3"></i>
                     <?php echo t('admin_premium_management'); ?>
                 </a>
-                <a href="payments.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable <?php echo $current_page === 'payments' && !isset($_GET['action']) ? 'active bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'; ?>">
+                <a href="payments.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable menu-item-hover <?php echo $current_page === 'payments' && !isset($_GET['action']) ? 'menu-item-active text-white' : 'text-gray-300'; ?>">
                     <i class="fas fa-money-bill mr-3"></i>
                     <?php echo t('admin_payments'); ?>
                 </a>
-                <a href="payments.php?action=refund_requests" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable <?php echo $current_page === 'payments' && isset($_GET['action']) && $_GET['action'] === 'refund_requests' ? 'active bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'; ?>">
+                <a href="payments.php?action=refund_requests" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable menu-item-hover <?php echo $current_page === 'payments' && isset($_GET['action']) && $_GET['action'] === 'refund_requests' ? 'menu-item-active text-white' : 'text-gray-300'; ?>">
                     <i class="fas fa-undo mr-3"></i>
                     <?php echo t('admin_refund_requests'); ?>
                 </a>
@@ -152,7 +187,7 @@ error_log("Admin sidebar: Avatar dosyası - $avatar_path - " . (file_exists($ava
         </div>
 
         <!-- İletişim -->
-        <a href="messages.php" class="flex items-center px-6 py-3 menu-item-stable <?php echo $current_page === 'messages' ? 'bg-gray-900' : 'hover:bg-gray-700'; ?>">
+        <a href="messages.php" class="flex items-center px-6 py-3 menu-item-stable menu-item-hover <?php echo $current_page === 'messages' ? 'menu-item-active' : ''; ?>">
             <i class="fas fa-envelope mr-3"></i>
             <?php echo t('admin_messages'); ?>
             <?php
@@ -169,7 +204,7 @@ error_log("Admin sidebar: Avatar dosyası - $avatar_path - " . (file_exists($ava
 
         <!-- Site Yönetimi -->
         <div class="mt-2">
-            <button @click="siteOpen = !siteOpen" class="flex items-center justify-between w-full px-6 py-3 text-left hover:bg-gray-700 focus:outline-none menu-item-stable">
+            <button @click="siteOpen = !siteOpen" class="flex items-center justify-between w-full px-6 py-3 text-left menu-item-hover focus:outline-none menu-item-stable">
                 <div class="flex items-center">
                     <i class="fas fa-cogs mr-3"></i>
                     <?php echo t('admin_site_management'); ?>
@@ -185,35 +220,35 @@ error_log("Admin sidebar: Avatar dosyası - $avatar_path - " . (file_exists($ava
                  x-transition:leave-start="opacity-100 transform translate-y-0" 
                  x-transition:leave-end="opacity-0 transform -translate-y-2" 
                  class="ml-6">
-                <a href="settings.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable <?php echo $current_page === 'settings' ? 'active bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'; ?>">
+                <a href="settings.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable menu-item-hover <?php echo $current_page === 'settings' ? 'menu-item-active text-white' : 'text-gray-300'; ?>">
                     <i class="fas fa-cog mr-3"></i>
                     <?php echo t('admin_settings'); ?>
                 </a>
-                <a href="seo.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable <?php echo $current_page === 'seo' ? 'active bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'; ?>">
+                <a href="seo.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable menu-item-hover <?php echo $current_page === 'seo' ? 'menu-item-active text-white' : 'text-gray-300'; ?>">
                     <i class="fas fa-search mr-3"></i>
                     <?php echo t('admin_seo'); ?>
                 </a>
-                <a href="ads.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable <?php echo $current_page === 'ads' ? 'active bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'; ?>">
+                <a href="ads.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable menu-item-hover <?php echo $current_page === 'ads' ? 'menu-item-active text-white' : 'text-gray-300'; ?>">
                     <i class="fas fa-ad mr-3"></i>
                     <?php echo t('admin_ads'); ?>
                 </a>
-                <a href="payment_methods.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable <?php echo $current_page === 'payment_methods' ? 'active bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'; ?>">
+                <a href="payment_methods.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable menu-item-hover <?php echo $current_page === 'payment_methods' ? 'menu-item-active text-white' : 'text-gray-300'; ?>">
                     <i class="fas fa-credit-card mr-3"></i>
                     <?php echo t('admin_payment_methods'); ?>
                 </a>
-                <a href="bots.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable <?php echo $current_page === 'bots' ? 'active bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'; ?>">
+                <a href="bots.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable menu-item-hover <?php echo $current_page === 'bots' ? 'menu-item-active text-white' : 'text-gray-300'; ?>">
                     <i class="fas fa-robot mr-3"></i>
                     <?php echo t('admin_bots'); ?>
                 </a>
-                <a href="cookies.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable <?php echo $current_page === 'cookies' ? 'active bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'; ?>">
+                <a href="cookies.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable menu-item-hover <?php echo $current_page === 'cookies' ? 'menu-item-active text-white' : 'text-gray-300'; ?>">
                     <i class="fas fa-cookie mr-3"></i>
                     <?php echo t('admin_cookies'); ?>
                 </a>
-                <a href="backup.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable <?php echo $current_page === 'backup' ? 'active bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'; ?>">
+                <a href="backup.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable menu-item-hover <?php echo $current_page === 'backup' ? 'menu-item-active text-white' : 'text-gray-300'; ?>">
                     <i class="fas fa-database mr-3"></i>
                     <?php echo t('admin_backup'); ?>
                 </a>
-                <a href="maintenance.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable <?php echo $current_page === 'maintenance' ? 'active bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'; ?>">
+                <a href="maintenance.php" class="submenu-item flex items-center px-6 py-2 text-sm menu-item-stable menu-item-hover <?php echo $current_page === 'maintenance' ? 'menu-item-active text-white' : 'text-gray-300'; ?>">
                     <i class="fas fa-tools mr-3"></i>
                     <?php echo t('maintenance_mode'); ?>
                 </a>
@@ -222,8 +257,8 @@ error_log("Admin sidebar: Avatar dosyası - $avatar_path - " . (file_exists($ava
     </nav>
     
     <!-- Hızlı Erişim -->
-    <div class="mt-auto pt-4 border-t border-gray-700 flex-shrink-0">
-        <a href="/" class="flex items-center px-6 py-3 hover:bg-gray-700 menu-item-stable">
+    <div class="mt-auto pt-4 border-t border-gray-700 dark:border-gray-600 flex-shrink-0">
+        <a href="/" class="flex items-center px-6 py-3 menu-item-hover menu-item-stable">
             <i class="fas fa-home mr-3"></i>
             <span class="md:inline"><?php echo t('admin_return_to_site'); ?></span>
         </a>
