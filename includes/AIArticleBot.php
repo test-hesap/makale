@@ -1036,37 +1036,69 @@ class AIArticleBot {
         
         $prompt = $this->buildPrompt($topic, $language);
         
-        try {
-            $response = $this->client->post('https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent', [
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                    'x-goog-api-key' => $apiKey
-                ],
-                'json' => [
-                    'contents' => [
-                        [
-                            'parts' => [
-                                ['text' => $prompt]
-                            ]
-                        ]
+        // Retry logic parameters
+        $maxRetries = 3;
+        $retryDelay = 2; // seconds
+        
+        for ($attempt = 1; $attempt <= $maxRetries; $attempt++) {
+            try {
+                $response = $this->client->post('https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent', [
+                    'headers' => [
+                        'Content-Type' => 'application/json',
+                        'x-goog-api-key' => $apiKey
                     ],
-                    'generationConfig' => [
-                        'temperature' => 0.7,
-                        'maxOutputTokens' => 1000,
+                    'json' => [
+                        'contents' => [
+                            [
+                                'parts' => [
+                                    ['text' => $prompt]
+                                ]
+                            ]
+                        ],
+                        'generationConfig' => [
+                            'temperature' => 0.7,
+                            'maxOutputTokens' => 1000,
+                        ]
                     ]
-                ]
-            ]);
-            
-            $data = json_decode($response->getBody(), true);
-            
-            if (!isset($data['candidates'][0]['content']['parts'][0]['text'])) {
-                throw new Exception("Gemini API'den geçersiz yanıt");
+                ]);
+                
+                $data = json_decode($response->getBody(), true);
+                
+                if (!isset($data['candidates'][0]['content']['parts'][0]['text'])) {
+                    throw new Exception("Gemini API'den geçersiz yanıt");
+                }
+                
+                if ($attempt > 1) {
+                    $this->log("Gemini API retry başarılı - Deneme: $attempt");
+                }
+                
+                return $this->parseGeneratedContent($data['candidates'][0]['content']['parts'][0]['text'], $language);
+                
+            } catch (RequestException $e) {
+                $errorMessage = $e->getMessage();
+                $this->log("Gemini API hatası (Deneme $attempt/$maxRetries): " . $errorMessage);
+                
+                // Check if it's a retryable error (503, 429, 500, 502)
+                $retryableErrors = ['503', '429', '500', '502'];
+                $isRetryable = false;
+                
+                foreach ($retryableErrors as $code) {
+                    if (strpos($errorMessage, $code) !== false) {
+                        $isRetryable = true;
+                        break;
+                    }
+                }
+                
+                // If it's the last attempt or not retryable, throw the exception
+                if ($attempt === $maxRetries || !$isRetryable) {
+                    throw new Exception("Gemini API hatası: " . $errorMessage);
+                }
+                
+                // Wait before retry (exponential backoff)
+                $delay = $retryDelay * pow(2, $attempt - 1);
+                $this->log("Gemini API retry bekleniyor: {$delay} saniye...");
+                sleep($delay);
             }
-            
-            return $this->parseGeneratedContent($data['candidates'][0]['content']['parts'][0]['text'], $language);
-            
-        } catch (RequestException $e) {
-            throw new Exception("Gemini API hatası: " . $e->getMessage());
         }
     }
     
@@ -1081,35 +1113,67 @@ class AIArticleBot {
         
         $prompt = $this->buildPrompt($topic, $language);
         
-        try {
-            $response = $this->client->post('https://api.x.ai/v1/chat/completions', [
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                    'Authorization' => 'Bearer ' . $apiKey
-                ],
-                'json' => [
-                    'model' => 'grok-beta',
-                    'messages' => [
-                        [
-                            'role' => 'user',
-                            'content' => $prompt
-                        ]
+        // Retry logic parameters
+        $maxRetries = 3;
+        $retryDelay = 2; // seconds
+        
+        for ($attempt = 1; $attempt <= $maxRetries; $attempt++) {
+            try {
+                $response = $this->client->post('https://api.x.ai/v1/chat/completions', [
+                    'headers' => [
+                        'Content-Type' => 'application/json',
+                        'Authorization' => 'Bearer ' . $apiKey
                     ],
-                    'temperature' => 0.7,
-                    'max_tokens' => 1000
-                ]
-            ]);
-            
-            $data = json_decode($response->getBody(), true);
-            
-            if (!isset($data['choices'][0]['message']['content'])) {
-                throw new Exception("Grok API'den geçersiz yanıt");
+                    'json' => [
+                        'model' => 'grok-beta',
+                        'messages' => [
+                            [
+                                'role' => 'user',
+                                'content' => $prompt
+                            ]
+                        ],
+                        'temperature' => 0.7,
+                        'max_tokens' => 1000
+                    ]
+                ]);
+                
+                $data = json_decode($response->getBody(), true);
+                
+                if (!isset($data['choices'][0]['message']['content'])) {
+                    throw new Exception("Grok API'den geçersiz yanıt");
+                }
+                
+                if ($attempt > 1) {
+                    $this->log("Grok API retry başarılı - Deneme: $attempt");
+                }
+                
+                return $this->parseGeneratedContent($data['choices'][0]['message']['content'], $language);
+                
+            } catch (RequestException $e) {
+                $errorMessage = $e->getMessage();
+                $this->log("Grok API hatası (Deneme $attempt/$maxRetries): " . $errorMessage);
+                
+                // Check if it's a retryable error (503, 429, 500, 502)
+                $retryableErrors = ['503', '429', '500', '502'];
+                $isRetryable = false;
+                
+                foreach ($retryableErrors as $code) {
+                    if (strpos($errorMessage, $code) !== false) {
+                        $isRetryable = true;
+                        break;
+                    }
+                }
+                
+                // If it's the last attempt or not retryable, throw the exception
+                if ($attempt === $maxRetries || !$isRetryable) {
+                    throw new Exception("Grok API hatası: " . $errorMessage);
+                }
+                
+                // Wait before retry (exponential backoff)
+                $delay = $retryDelay * pow(2, $attempt - 1);
+                $this->log("Grok API retry bekleniyor: {$delay} saniye...");
+                sleep($delay);
             }
-            
-            return $this->parseGeneratedContent($data['choices'][0]['message']['content'], $language);
-            
-        } catch (RequestException $e) {
-            throw new Exception("Grok API hatası: " . $e->getMessage());
         }
     }
     
@@ -1124,32 +1188,64 @@ class AIArticleBot {
         
         $prompt = $this->buildPrompt($topic, $language);
         
-        try {
-            $response = $this->client->post('https://api-inference.huggingface.co/models/microsoft/DialoGPT-large', [
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $apiKey,
-                    'Content-Type' => 'application/json'
-                ],
-                'json' => [
-                    'inputs' => $prompt,
-                    'parameters' => [
-                        'max_length' => 1000,
-                        'temperature' => 0.7,
-                        'do_sample' => true
+        // Retry logic parameters
+        $maxRetries = 3;
+        $retryDelay = 2; // seconds
+        
+        for ($attempt = 1; $attempt <= $maxRetries; $attempt++) {
+            try {
+                $response = $this->client->post('https://api-inference.huggingface.co/models/microsoft/DialoGPT-large', [
+                    'headers' => [
+                        'Authorization' => 'Bearer ' . $apiKey,
+                        'Content-Type' => 'application/json'
+                    ],
+                    'json' => [
+                        'inputs' => $prompt,
+                        'parameters' => [
+                            'max_length' => 1000,
+                            'temperature' => 0.7,
+                            'do_sample' => true
+                        ]
                     ]
-                ]
-            ]);
-            
-            $data = json_decode($response->getBody(), true);
-            
-            if (!isset($data[0]['generated_text'])) {
-                throw new Exception("Hugging Face API'den geçersiz yanıt");
+                ]);
+                
+                $data = json_decode($response->getBody(), true);
+                
+                if (!isset($data[0]['generated_text'])) {
+                    throw new Exception("Hugging Face API'den geçersiz yanıt");
+                }
+                
+                if ($attempt > 1) {
+                    $this->log("Hugging Face API retry başarılı - Deneme: $attempt");
+                }
+                
+                return $this->parseGeneratedContent($data[0]['generated_text'], $language);
+                
+            } catch (RequestException $e) {
+                $errorMessage = $e->getMessage();
+                $this->log("Hugging Face API hatası (Deneme $attempt/$maxRetries): " . $errorMessage);
+                
+                // Check if it's a retryable error (503, 429, 500, 502)
+                $retryableErrors = ['503', '429', '500', '502'];
+                $isRetryable = false;
+                
+                foreach ($retryableErrors as $code) {
+                    if (strpos($errorMessage, $code) !== false) {
+                        $isRetryable = true;
+                        break;
+                    }
+                }
+                
+                // If it's the last attempt or not retryable, throw the exception
+                if ($attempt === $maxRetries || !$isRetryable) {
+                    throw new Exception("Hugging Face API hatası: " . $errorMessage);
+                }
+                
+                // Wait before retry (exponential backoff)
+                $delay = $retryDelay * pow(2, $attempt - 1);
+                $this->log("Hugging Face API retry bekleniyor: {$delay} saniye...");
+                sleep($delay);
             }
-            
-            return $this->parseGeneratedContent($data[0]['generated_text'], $language);
-            
-        } catch (RequestException $e) {
-            throw new Exception("Hugging Face API hatası: " . $e->getMessage());
         }
     }
     
@@ -1391,6 +1487,8 @@ Important: Each paragraph must be between <p> tags, headings between <h2> tags. 
         // Etiketler çıkar
         if (preg_match($tagsPattern, $content, $tagMatches)) {
             $tags = trim($tagMatches[1]);
+            // AI'dan gelen taglerde de Türkçe karakterleri dönüştür
+            $tags = $this->normalizeTags($tags);
         } else {
             // Fallback: Başlıktan otomatik etiket oluştur
             $tags = $this->generateTagsFromTitle($title, $language);
@@ -1503,9 +1601,16 @@ Important: Each paragraph must be between <p> tags, headings between <h2> tags. 
      * Makale başlığından etiket oluşturur
      */
     private function generateTagsFromTitle($title, $language = 'tr') {
-        // Başlığı temizle ve küçük harfe çevir
-        $cleanTitle = strtolower($title);
-        $cleanTitle = preg_replace('/[^\w\s]/', '', $cleanTitle); // Noktalama işaretlerini kaldır
+        // Başlığı temizle ve küçük harfe çevir (UTF-8 desteği ile)
+        $cleanTitle = mb_strtolower($title, 'UTF-8');
+        
+        // Türkçe karakterleri SEO dostu hale getir
+        $tr = ['ş','ğ','ı','ü','ö','ç','Ş','Ğ','İ','Ü','Ö','Ç'];
+        $en = ['s','g','i','u','o','c','s','g','i','u','o','c'];
+        $cleanTitle = str_replace($tr, $en, $cleanTitle);
+        
+        // Noktalama işaretlerini kaldır ama Türkçe karakterleri koru
+        $cleanTitle = preg_replace('/[^\w\s]/u', '', $cleanTitle);
         
         if ($language === 'en') {
             // İngilizce stop words (yaygın kelimeler)
@@ -1545,10 +1650,10 @@ Important: Each paragraph must be between <p> tags, headings between <h2> tags. 
         
         foreach ($words as $word) {
             $word = trim($word);
-            // En az 3 karakter olmalı, stop word olmamalı
-            if (strlen($word) >= 3 && !in_array($word, $stopWords) && !in_array($word, $commonTechWords)) {
+            // En az 3 karakter olmalı, stop word olmamalı (UTF-8 desteği ile)
+            if (mb_strlen($word, 'UTF-8') >= 3 && !in_array($word, $stopWords) && !in_array($word, $commonTechWords)) {
                 // Çok yaygın kelimeler değilse ekle
-                if (!in_array($word, ['how', 'what', 'why', 'when', 'where', 'nasıl', 'nedir', 'neden', 'ne', 'nerede'])) {
+                if (!in_array($word, ['how', 'what', 'why', 'when', 'where', 'nasil', 'nedir', 'neden', 'ne', 'nerede'])) {
                     $keywords[] = $word;
                 }
             }
@@ -1810,5 +1915,39 @@ Important: Each paragraph must be between <p> tags, headings between <h2> tags. 
             $this->log("HATA: Son makaleler alınırken hata: " . $e->getMessage());
             return [];
         }
+    }
+    
+    /**
+     * Tags içindeki Türkçe karakterleri SEO dostu hale getirir
+     */
+    private function normalizeTags($tags) {
+        // Virgülle ayrılmış tagları al
+        $tagArray = explode(',', $tags);
+        $normalizedTags = [];
+        
+        foreach ($tagArray as $tag) {
+            $tag = trim($tag);
+            if (!empty($tag)) {
+                // Türkçe karakterleri dönüştür
+                $tr = ['ş','ğ','ı','ü','ö','ç','Ş','Ğ','İ','Ü','Ö','Ç'];
+                $en = ['s','g','i','u','o','c','s','g','i','u','o','c'];
+                $normalizedTag = str_replace($tr, $en, $tag);
+                
+                // Küçük harfe çevir (UTF-8 desteği ile)
+                $normalizedTag = mb_strtolower($normalizedTag, 'UTF-8');
+                
+                // Özel karakterleri temizle
+                $normalizedTag = preg_replace('/[^a-z0-9\s]/', '', $normalizedTag);
+                
+                // Boşlukları trim et
+                $normalizedTag = trim($normalizedTag);
+                
+                if (!empty($normalizedTag)) {
+                    $normalizedTags[] = $normalizedTag;
+                }
+            }
+        }
+        
+        return implode(', ', $normalizedTags);
     }
 }

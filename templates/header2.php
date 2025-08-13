@@ -253,7 +253,25 @@ if (isset($_SESSION['user_id'])) {
             }
         }
     </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">    <style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Koyu mod flash etkisini önlemek için erken tema uygulaması -->
+    <script>
+        (function() {
+            // localStorage'dan tema tercihini hemen al
+            const userTheme = localStorage.getItem('theme');
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            // Tema tercihine göre dark class'ını hemen uygula
+            if (userTheme === 'dark' || (!userTheme && systemPrefersDark)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
+    
+    <style>
         /* Karanlık mod geçiş efekti */
         .dark-mode-transition {
             transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
@@ -261,9 +279,15 @@ if (isset($_SESSION['user_id'])) {
         
         /* Koyu tema stilleri */
         .dark body {
-            background-color: #1a1a1a;
-            color: #e0e0e0;
+            background-color: #1a1a1a !important;
+            color: #e0e0e0 !important;
         }
+        
+        /* İlk yükleme için koyu mod stil önceliği */
+        html.dark {
+            background-color: #1a1a1a !important;
+        }
+        
         .dark .bg-white {
             background-color: #2a2a2a !important;
         }
@@ -830,12 +854,13 @@ if (isset($_SESSION['user_id'])) {
                 themeToggleBtn.addEventListener('click', toggleTheme);
             }
             
-            // Kullanıcının tema tercihini al
+            // Kullanıcının tema tercihini kontrol et ve ikonları ayarla
             const userTheme = localStorage.getItem('theme');
             const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-              // Tema tercihine göre ayarla
-            if (userTheme === 'dark' || (!userTheme && systemPrefersDark)) {
-                document.documentElement.classList.add('dark');
+            const isDarkMode = userTheme === 'dark' || (!userTheme && systemPrefersDark);
+              
+            // İkonları tema durumuna göre ayarla
+            if (isDarkMode) {
                 // Desktop için ikonları ayarla
                 if (document.getElementById('theme-toggle-light-icon')) {
                     document.getElementById('theme-toggle-light-icon').classList.add('hidden');
@@ -851,7 +876,6 @@ if (isset($_SESSION['user_id'])) {
                     document.getElementById('theme-toggle-dark-icon-mobile').classList.remove('hidden');
                 }
             } else {
-                document.documentElement.classList.remove('dark');
                 // Desktop için ikonları ayarla
                 if (document.getElementById('theme-toggle-dark-icon')) {
                     document.getElementById('theme-toggle-dark-icon').classList.add('hidden');

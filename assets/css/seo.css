@@ -52,21 +52,32 @@ h3 {
 
 /* Karanlık mod uyumluluğu */
 .dark h1 {
-    color: #f7fafc;
+    color: #f7fafc !important;
 }
 
 .dark h2, 
 .dark h3 {
-    color: #e2e8f0;
+    color: #e2e8f0 !important;
 }
 
 .dark .sidebar-heading {
     color: #e2e8f0 !important;
-    border-bottom-color: #4a5568;
+    border-bottom-color: #4a5568 !important;
 }
 
 .dark .sidebar-article-title {
     color: #cbd5e0 !important;
+}
+
+/* Koyu mod için body ve html başlangıç stilleri */
+html.dark {
+    background-color: #1a1a1a !important;
+    color: #e0e0e0 !important;
+}
+
+.dark body {
+    background-color: #1a1a1a !important;
+    color: #e0e0e0 !important;
 }
 
 /* Makale içerisindeki içerik için H4, H5, H6 stilleri */
@@ -100,5 +111,39 @@ h3 {
 .dark .article-content h4,
 .dark .article-content h5,
 .dark .article-content h6 {
-    color: #cbd5e0;
+    color: #cbd5e0 !important;
+}
+
+/* Beyaz flash etkisini önlemek için ekstra koyu mod stilleri */
+html.dark,
+html.dark body,
+.dark {
+    background-color: #1a1a1a !important;
+    color: #e0e0e0 !important;
+}
+
+.dark *:not(img):not(svg):not(path) {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease !important;
+}
+
+/* CSS yüklenmeden önce için kritik stiller */
+@media (prefers-color-scheme: dark) {
+    html:not(.light) {
+        background-color: #1a1a1a !important;
+        color: #e0e0e0 !important;
+    }
+    html:not(.light) body {
+        background-color: #1a1a1a !important;
+        color: #e0e0e0 !important;
+    }
+}
+
+/* Koyu mod için tag ve link stilleri */
+.dark a[href*="/etiket/"] {
+    background-color: #374151 !important; /* gray-700 */
+    color: #d1d5db !important; /* gray-300 */
+}
+
+.dark a[href*="/etiket/"]:hover {
+    background-color: #4b5563 !important; /* gray-600 */
 }

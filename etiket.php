@@ -262,7 +262,7 @@ $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </h2>
                     <div class="flex flex-wrap gap-2">
                         <?php foreach ($tag_array as $t => $count): ?>
-                            <a href="/etiket/<?php echo urlencode($t); ?>" class="inline-block bg-gray-100 hover:bg-blue-100 dark:bg-gray-700 dark:hover:bg-blue-900 text-gray-700 dark:text-gray-300 hover:text-blue-700 dark:hover:text-blue-300 rounded-full px-3 py-1 text-sm transition-colors duration-200">
+                            <a href="/etiket/<?php echo urlencode($t); ?>" class="inline-block bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-full px-3 py-1 text-sm transition-colors duration-200">
                                 <?php echo htmlspecialchars($t); ?> 
                                 <span class="text-xs text-gray-500 dark:text-gray-400">(<?php echo $count; ?>)</span>
                             </a>

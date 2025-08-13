@@ -280,9 +280,19 @@ include 'includes/header.php';
                         ?>
                     </div>
                     
-                    <button type="submit" name="generate_article" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors">
-                        <i class="fas fa-magic mr-2"></i><?php echo t('admin_generate_article'); ?>
+                    <button type="submit" name="generate_article" id="generateBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed">
+                        <span id="generateBtnText">
+                            <i class="fas fa-magic mr-2"></i><?php echo t('admin_generate_article'); ?>
+                        </span>
+                        <span id="generateBtnLoading" class="hidden">
+                            <i class="fas fa-spinner fa-spin mr-2"></i>Makale üretiliyor...
+                        </span>
                     </button>
+                    
+                    <div id="retryInfo" class="hidden bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded text-sm">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        <strong>Bilgi:</strong> API geçici olarak aşırı yüklenmiş olabilir. Sistem otomatik olarak 3 kez deneyecek ve gerekirse bekleyecektir.
+                    </div>
                 </form>
             </div>
         </div>
@@ -433,5 +443,46 @@ include 'includes/header.php';
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form[method="POST"]');
+    const generateBtn = document.getElementById('generateBtn');
+    const generateBtnText = document.getElementById('generateBtnText');
+    const generateBtnLoading = document.getElementById('generateBtnLoading');
+    const retryInfo = document.getElementById('retryInfo');
+    
+    if (form && generateBtn) {
+        form.addEventListener('submit', function(e) {
+            const formData = new FormData(form);
+            if (formData.has('generate_article')) {
+                // Show loading state
+                generateBtn.disabled = true;
+                generateBtnText.classList.add('hidden');
+                generateBtnLoading.classList.remove('hidden');
+                retryInfo.classList.remove('hidden');
+                
+                // Set a timeout to show additional info after 5 seconds
+                setTimeout(function() {
+                    if (generateBtn.disabled) {
+                        const extraInfo = document.createElement('div');
+                        extraInfo.className = 'mt-2 text-sm text-blue-600';
+                        extraInfo.innerHTML = '<i class="fas fa-clock mr-1"></i>İşlem devam ediyor... API tekrar denemeleri yapılıyor olabilir.';
+                        retryInfo.appendChild(extraInfo);
+                    }
+                }, 5000);
+            }
+        });
+    }
+    
+    // Reset form state if there's an error message visible
+    const errorDiv = document.querySelector('.bg-red-100');
+    if (errorDiv && generateBtn) {
+        generateBtn.disabled = false;
+        generateBtnText.classList.remove('hidden');
+        generateBtnLoading.classList.add('hidden');
+    }
+});
+</script>
 
 <?php include 'includes/footer.php'; ?>

@@ -807,7 +807,7 @@ $lang['admin_operation_error'] = 'İşlem sırasında hata oluştu';
 // Admin AI Bot
 $lang['admin_article_ai_bot'] = 'Makale AI Bot';
 $lang['admin_article_generated_success'] = 'Makale başarıyla oluşturuldu! (ID: {id})';
-$lang['admin_article_generation_failed'] = 'Makale oluşturulamadı. Log dosyasını kontrol edin.';
+$lang['admin_article_generation_failed'] = 'Makale oluşturulamadı. Tüm retry denemeleri başarısız oldu. Log dosyasını kontrol edin.';
 $lang['admin_error'] = 'Hata';
 $lang['admin_settings_updated_config_note'] = 'Ayarlar güncellendi! (API anahtarları config.php dosyasından düzenlenmelidir)';
 $lang['admin_bot_data_access_error'] = 'Bot verilerine erişilemedi';

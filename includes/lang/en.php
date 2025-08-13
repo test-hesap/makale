@@ -694,7 +694,7 @@ $lang = [
     // Admin AI Bot
     'admin_article_ai_bot' => 'Article AI Bot',
     'admin_article_generated_success' => 'Article successfully generated! (ID: {id})',
-    'admin_article_generation_failed' => 'Failed to generate article. Check the log file.',
+    'admin_article_generation_failed' => 'Failed to generate article. All retry attempts failed. Check the log file.',
     'admin_error' => 'Error',
     'admin_settings_updated_config_note' => 'Settings updated! (API keys must be edited from the config.php file)',
     'admin_bot_data_access_error' => 'Could not access bot data',

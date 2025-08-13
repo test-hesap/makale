@@ -415,7 +415,7 @@ if ($action === 'list') {
                                     <select class="mt-1 block w-full border border-gray-300 dark:border-gray-600 p-2 focus:outline-none focus:border-gray-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200" 
                                             id="status" name="status" required>
                                         <option value="draft"><?php echo t('admin_draft'); ?></option>
-                                        <option value="published"><?php echo t('admin_published'); ?></option>
+                                        <option value="published" selected><?php echo t('admin_published'); ?></option>
                                     </select>
                                 </div>
 
