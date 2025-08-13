@@ -550,6 +550,47 @@ $similar_articles = $similar_stmt->fetchAll(PDO::FETCH_ASSOC);
                 background-position: -200% 0;
             }
         }
+
+        /* Şık makale başlığı stili */
+        .fancy-article-title {
+            position: relative;
+            font-weight: 800;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+            /* Responsive font-size */
+            font-size: clamp(1.75rem, 1.2rem + 2vw, 2.75rem);
+            /* Degrade yazı rengi */
+            background-image: linear-gradient(90deg, #2563eb, #7c3aed);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            text-shadow: none;
+        }
+        .dark .fancy-article-title {
+            background-image: linear-gradient(90deg, #93c5fd, #d8b4fe);
+        }
+        .fancy-article-title::after {
+            content: '';
+            display: block;
+            height: 4px;
+            width: 96px;
+            margin-top: 12px;
+            border-radius: 9999px;
+            background-image: linear-gradient(90deg, #2563eb, #7c3aed);
+            box-shadow: 0 2px 10px rgba(37, 99, 235, 0.25);
+            transform-origin: left;
+            transform: scaleX(0);
+            animation: fancy-underline-grow 600ms ease-out 50ms forwards;
+        }
+        .dark .fancy-article-title::after {
+            background-image: linear-gradient(90deg, #60a5fa, #c084fc);
+            box-shadow: 0 2px 10px rgba(147, 197, 253, 0.25);
+        }
+        @keyframes fancy-underline-grow {
+            from { transform: scaleX(0); }
+            to { transform: scaleX(1); }
+        }
     </style>
     
     <!-- FOUC önleme ve sayfa yükleme optimizasyonu -->
@@ -667,9 +708,9 @@ $similar_articles = $similar_stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <?php echo date('d.m.Y', strtotime($article['created_at'])); ?>
                             </span>
                         </div>
-                          <h1 class="text-3xl font-bold mb-6 text-gray-800 dark:text-gray-100">
-                            <?php echo $article['title']; ?>
-                        </h1>
+                                                    <h1 class="fancy-article-title mb-6">
+                                                        <?php echo $article['title']; ?>
+                                                </h1>
                         
                         <?php if (!empty($article['tags'])): ?>
                         <div class="flex flex-wrap gap-3 mb-6">
