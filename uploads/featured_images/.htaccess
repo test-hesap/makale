@@ -1,0 +1,15 @@
+# Güvenlik ayarları - sadece resim dosyalarına izin ver
+<Files ~ "\.(jpg|jpeg|png|gif|webp)$">
+    Order Allow,Deny
+    Allow from all
+</Files>
+
+# Diğer dosya türlerini reddet
+<Files ~ "\.(php|phtml|php3|php4|php5|pl|py|jsp|asp|sh|cgi)$">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+# Dosya çalıştırma izinlerini kaldır
+Options -ExecCGI
+AddHandler cgi-script .php .pl .py .jsp .asp .sh .cgi
