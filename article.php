@@ -208,16 +208,22 @@ $similar_articles = $similar_stmt->fetchAll(PDO::FETCH_ASSOC);
     ?>
     <!-- Tema ayarlarını sayfa yüklenmeden önce kontrol et ve uygula -->
     <script>
-        // Mevcut tema tercihini kontrol et ve uygula
-        if (localStorage.getItem('theme') === 'dark' || 
-            (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
+        // Sayfa yüklenmeden önce tema uygulanması - FOUC (Flash of Unstyled Content) önleme
+        (function() {
+            if (localStorage.getItem('theme') === 'dark' || 
+                (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
     </script>
-    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- CSS dosyalarını önce yükle -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind konfigürasyonu -->
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -239,6 +245,21 @@ $similar_articles = $similar_stmt->fetchAll(PDO::FETCH_ASSOC);
         }
     </script>
     <style>
+        /* Sayfa yüklenmesi için temel stiller - FOUC önleme */
+        html {
+            opacity: 1;
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        body {
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        body.loaded {
+            opacity: 1;
+        }
+        
         /* Makale içeriği için gelişmiş stil */
         .article-content {
             font-family: 'Georgia', 'Times New Roman', serif;
@@ -387,6 +408,22 @@ $similar_articles = $similar_stmt->fetchAll(PDO::FETCH_ASSOC);
                 font-size: 1rem;
                 margin-bottom: 1.5rem;
             }
+            
+            .article-content img {
+                max-width: 100% !important;
+                width: 100% !important;
+                height: 250px !important;
+                object-fit: cover;
+                margin: 1rem auto !important;
+            }
+            
+            .article-image img {
+                width: 100% !important;
+                height: 250px !important;
+                max-width: 100% !important;
+                object-fit: cover;
+                margin: 0 auto !important;
+            }
         }
         
         /* Print stili */
@@ -427,10 +464,14 @@ $similar_articles = $similar_stmt->fetchAll(PDO::FETCH_ASSOC);
             margin-bottom: 0.5rem;
         }
         .article-content img {
-            max-width: 100%;
-            height: auto;
-            margin: 1.5rem 0;
+            max-width: 800px;
+            width: 800px;
+            height: 400px;
+            object-fit: cover;
+            margin: 1.5rem auto;
             display: block; /* Blok element olarak gösterilsin */
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         .article-content a {
             color: #2563eb;
@@ -449,7 +490,7 @@ $similar_articles = $similar_stmt->fetchAll(PDO::FETCH_ASSOC);
             color: #1d4ed8;
         }
         
-        /* Dark mode geçiş efekti */
+        /* Dark mode geçiş efekti - Geliştirilmiş */
         .dark-mode-transition {
             transition: background-color 0.3s ease, color 0.3s ease;
         }
@@ -457,6 +498,97 @@ $similar_articles = $similar_stmt->fetchAll(PDO::FETCH_ASSOC);
         .dark-mode-transition * {
             transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }
+        
+        /* Paylaşım butonları hover efektleri - Stabilize edilmiş */
+        .share-button {
+            position: relative;
+            overflow: hidden;
+            transform: translateZ(0); /* GPU hızlandırması */
+            backface-visibility: hidden; /* Flicker önleme */
+        }
+        
+        .share-button:hover {
+            transform: translateZ(0) scale(1.05);
+            transition: transform 0.2s ease;
+        }
+        
+        /* Görsel yükleme optimizasyonu */
+        .article-image {
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            will-change: auto;
+        }
+        
+        .article-image img {
+            display: block;
+            width: 800px;
+            height: 400px;
+            max-width: 800px;
+            object-fit: cover;
+            margin: 0 auto;
+            border-radius: 8px;
+            transition: none; /* Hover sırasında geçiş efektini kaldır */
+        }
+        
+        /* Layout shift önleme */
+        .content-container {
+            min-height: 100vh;
+        }
+        
+        /* Skeleton loading için */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+    </style>
+    
+    <!-- FOUC önleme ve sayfa yükleme optimizasyonu -->
+    <script>
+        // Sayfa tamamen yüklenene kadar görünürlüğü kontrol et
+        document.addEventListener('DOMContentLoaded', function() {
+            // Temel DOM yüklendiğinde body'yi görünür yap
+            document.body.classList.add('loaded');
+            
+            // Görsellerin yüklenmesini bekle
+            const images = document.querySelectorAll('img');
+            let loadedImages = 0;
+            const totalImages = images.length;
+            
+            function imageLoaded() {
+                loadedImages++;
+                if (loadedImages === totalImages || totalImages === 0) {
+                    // Tüm görseller yüklendiğinde ekstra stabilizasyon
+                    setTimeout(function() {
+                        document.body.style.visibility = 'visible';
+                        document.body.style.opacity = '1';
+                    }, 100);
+                }
+            }
+            
+            if (totalImages === 0) {
+                document.body.style.visibility = 'visible';
+                document.body.style.opacity = '1';
+            } else {
+                images.forEach(img => {
+                    if (img.complete && img.naturalHeight !== 0) {
+                        imageLoaded();
+                    } else {
+                        img.addEventListener('load', imageLoaded);
+                        img.addEventListener('error', imageLoaded);
+                    }
+                });
+            }
+        });
     </style>
     <script>
         // Yorum cevaplama formunu göster
@@ -478,7 +610,7 @@ $similar_articles = $similar_stmt->fetchAll(PDO::FETCH_ASSOC);
         }
     </script>
 </head>
-<body class="bg-gray-100 dark:bg-dark-bg dark-mode-transition">
+<body class="bg-gray-100 dark:bg-dark-bg dark-mode-transition content-container" style="visibility: hidden; opacity: 0;">
     <?php include 'templates/header.php'; ?>
 
     <div class="container mx-auto px-4 py-0 mt-1">
@@ -493,7 +625,7 @@ $similar_articles = $similar_stmt->fetchAll(PDO::FETCH_ASSOC);
             <div class="w-full lg:w-2/3">
                 <article class="bg-white dark:bg-dark-card rounded-lg shadow-lg overflow-hidden">
                     <?php if (isset($article['featured_image']) && $article['featured_image']): ?>
-                    <div class="relative">
+                    <div class="relative article-image">
                         <?php
                         // Kontrol et: Eğer URL tam bir URL ise doğrudan kullan, değilse uploads/ai_images/ dizinini ekle
                         $imgSrc = (strpos($article['featured_image'], 'http://') === 0 || strpos($article['featured_image'], 'https://') === 0)
@@ -502,9 +634,12 @@ $similar_articles = $similar_stmt->fetchAll(PDO::FETCH_ASSOC);
                                 ? $article['featured_image'] 
                                 : "/uploads/ai_images/" . $article['featured_image']);
                         ?>
-                        <img src="<?php echo $imgSrc; ?>" 
-                             alt="<?php echo $article['title']; ?>"
-                             class="w-full h-96 object-cover">
+                        <img src="<?php echo htmlspecialchars($imgSrc); ?>" 
+                             alt="<?php echo htmlspecialchars($article['title']); ?>"
+                             class="w-full h-96 object-cover"
+                             style="width: 800px; height: 400px; object-fit: cover; margin: 0 auto; display: block; border-radius: 8px;"
+                             loading="eager"
+                             decoding="async">
                         
                         <?php if (isset($article['is_premium']) && $article['is_premium'] == 1): ?>
                         <div class="absolute top-4 right-4 bg-purple-600 text-white py-2 px-4 rounded-md flex items-center shadow">
@@ -614,13 +749,71 @@ $similar_articles = $similar_stmt->fetchAll(PDO::FETCH_ASSOC);
                         <!-- Makale içi resimlerin ve reklamların stillerini düzenleyen script -->
                         <script>
                         document.addEventListener('DOMContentLoaded', function() {
+                            // Featured image'ı ayarla
+                            var featuredImage = document.querySelector('.article-image img');
+                            if (featuredImage) {
+                                if (window.innerWidth <= 768) {
+                                    featuredImage.style.width = '100%';
+                                    featuredImage.style.height = '250px';
+                                    featuredImage.style.maxWidth = '100%';
+                                } else {
+                                    featuredImage.style.width = '800px';
+                                    featuredImage.style.height = '400px';
+                                    featuredImage.style.maxWidth = '800px';
+                                }
+                                featuredImage.style.objectFit = 'cover';
+                                featuredImage.style.display = 'block';
+                                featuredImage.style.margin = '0 auto';
+                                featuredImage.style.borderRadius = '8px';
+                            }
+                            
                             // Tüm resimlerin CSS özelliklerini ayarla
                             var images = document.querySelectorAll('.article-content img');
                             images.forEach(function(img) {
-                                img.style.maxWidth = '100%';
-                                img.style.height = 'auto';
+                                // Mobil kontrol
+                                if (window.innerWidth <= 768) {
+                                    img.style.maxWidth = '100%';
+                                    img.style.width = '100%';
+                                    img.style.height = '250px';
+                                } else {
+                                    img.style.maxWidth = '800px';
+                                    img.style.width = '800px';
+                                    img.style.height = '400px';
+                                }
+                                img.style.objectFit = 'cover';
                                 img.style.display = 'block';
                                 img.style.margin = '20px auto';
+                                img.style.borderRadius = '8px';
+                                img.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
+                            });
+                            
+                            // Pencere boyutu değiştiğinde resimleri yeniden ayarla
+                            window.addEventListener('resize', function() {
+                                // Featured image resize
+                                if (featuredImage) {
+                                    if (window.innerWidth <= 768) {
+                                        featuredImage.style.width = '100%';
+                                        featuredImage.style.height = '250px';
+                                        featuredImage.style.maxWidth = '100%';
+                                    } else {
+                                        featuredImage.style.width = '800px';
+                                        featuredImage.style.height = '400px';
+                                        featuredImage.style.maxWidth = '800px';
+                                    }
+                                }
+                                
+                                // Article content images resize
+                                images.forEach(function(img) {
+                                    if (window.innerWidth <= 768) {
+                                        img.style.maxWidth = '100%';
+                                        img.style.width = '100%';
+                                        img.style.height = '250px';
+                                    } else {
+                                        img.style.maxWidth = '800px';
+                                        img.style.width = '800px';
+                                        img.style.height = '400px';
+                                    }
+                                });
                             });
                             
                             // Reklamların görünürlüğünü ayarla
@@ -685,31 +878,31 @@ $similar_articles = $similar_stmt->fetchAll(PDO::FETCH_ASSOC);
                                 
                                 <!-- Facebook -->
                                 <button onclick="shareSocial('facebook', '<?php echo $encoded_url; ?>', '<?php echo $encoded_title; ?>')" 
-                                   class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors duration-200">
+                                   class="share-button flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors duration-200">
                                     <i class="fab fa-facebook-f mr-2"></i> Facebook
                                 </button>
                                 
                                 <!-- Twitter/X -->
                                 <button onclick="shareSocial('twitter', '<?php echo $encoded_url; ?>', '<?php echo $encoded_title; ?>')"
-                                   class="flex items-center justify-center bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-md transition-colors duration-200">
+                                   class="share-button flex items-center justify-center bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-md transition-colors duration-200">
                                     <i class="fab fa-x-twitter mr-2"></i> X (Twitter)
                                 </button>
                                 
                                 <!-- LinkedIn -->
                                 <button onclick="shareSocial('linkedin', '<?php echo $encoded_url; ?>', '<?php echo $encoded_title; ?>')"
-                                   class="flex items-center justify-center bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-md transition-colors duration-200">
+                                   class="share-button flex items-center justify-center bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-md transition-colors duration-200">
                                     <i class="fab fa-linkedin-in mr-2"></i> LinkedIn
                                 </button>
                                 
                                 <!-- WhatsApp -->
                                 <button onclick="shareSocial('whatsapp', '<?php echo $encoded_url; ?>', '<?php echo $encoded_title; ?>')"
-                                   class="flex items-center justify-center bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md transition-colors duration-200">
+                                   class="share-button flex items-center justify-center bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md transition-colors duration-200">
                                     <i class="fab fa-whatsapp mr-2"></i> WhatsApp
                                 </button>
                                 
                                 <!-- Email -->
                                 <a href="mailto:?subject=<?php echo $encoded_title; ?>&body=<?php echo $encoded_url; ?>" 
-                                   class="flex items-center justify-center bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md transition-colors duration-200">
+                                   class="share-button flex items-center justify-center bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md transition-colors duration-200">
                                     <i class="fas fa-envelope mr-2"></i> <?php echo __('email'); ?>
                                 </a>
                             </div>
@@ -1081,7 +1274,9 @@ $similar_articles = $similar_stmt->fetchAll(PDO::FETCH_ASSOC);
                             ?>
                             <img src="<?php echo htmlspecialchars($imgSrc); ?>" 
                                  alt="<?php echo htmlspecialchars($pop_article['title']); ?>" 
-                                 class="w-20 h-20 object-cover rounded">
+                                 class="w-20 h-20 object-cover rounded article-image"
+                                 loading="lazy"
+                                 decoding="async">
                             <?php else: ?>
                             <div class="w-20 h-20 bg-gray-200 rounded flex items-center justify-center">
                                 <i class="fas fa-image text-gray-400 text-xl"></i>
@@ -1231,6 +1426,14 @@ $similar_articles = $similar_stmt->fetchAll(PDO::FETCH_ASSOC);
             }
         }
     }
+    </script>
+    
+    <!-- Sayfa tamamen yüklendiğinde görünür yap -->
+    <script>
+        window.addEventListener('load', function() {
+            document.body.style.visibility = 'visible';
+            document.body.style.opacity = '1';
+        });
     </script>
 
     <?php require_once 'templates/footer.php'; ?>
