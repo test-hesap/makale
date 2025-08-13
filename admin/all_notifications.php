@@ -68,6 +68,29 @@ try {
             <p class="text-gray-600 dark:text-gray-400">Henüz bildirim bulunmuyor.</p>
         </div>
     <?php else: ?>
+        <!-- Toplu işlemler için kontrol paneli -->
+        <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-4 mb-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <label class="flex items-center">
+                        <input type="checkbox" id="select-all" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        <span class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">Tümünü Seç</span>
+                    </label>
+                    <span id="selected-count" class="text-sm text-gray-500 dark:text-gray-400">0 seçili</span>
+                </div>
+                <div class="flex space-x-2">
+                    <button id="bulk-delete" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                        <i class="fas fa-trash mr-1"></i>
+                        Seçilenleri Sil
+                    </button>
+                    <button id="bulk-mark-read" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                        <i class="fas fa-check mr-1"></i>
+                        Seçilenleri Okundu İşaretle
+                    </button>
+                </div>
+            </div>
+        </div>
+        
         <div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
             <div class="divide-y divide-gray-200 dark:divide-gray-700">
                 <?php foreach ($notifications as $notification): ?>
@@ -75,8 +98,14 @@ try {
                         $isRead = $notification['is_read'] ? 'bg-white dark:bg-gray-800' : 'bg-blue-50 dark:bg-gray-700';
                         $timeAgo = time_elapsed_string($notification['created_at']);
                     ?>
-                    <div class="p-4 <?php echo $isRead; ?> hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                    <div class="p-4 <?php echo $isRead; ?> hover:bg-gray-50 dark:hover:bg-gray-700 transition" data-notification-id="<?php echo $notification['id']; ?>">
                         <div class="flex items-start">
+                            <!-- Seçim checkbox'ı -->
+                            <div class="mr-3 flex-shrink-0">
+                                <input type="checkbox" class="notification-checkbox rounded border-gray-300 text-blue-600 focus:ring-blue-500" 
+                                       value="<?php echo $notification['id']; ?>">
+                            </div>
+                            
                             <?php if (!empty($notification['user_id']) && !empty($notification['username'])): ?>
                                 <div class="mr-3 flex-shrink-0">
                                     <div class="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
@@ -145,6 +174,11 @@ try {
                                         Okundu İşaretle
                                     </button>
                                     <?php endif; ?>
+                                    
+                                    <button onclick="deleteNotification(<?php echo $notification['id']; ?>, this)" 
+                                            class="text-xs text-red-500 hover:text-red-700 dark:text-red-400 hover:underline">
+                                        Sil
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -153,7 +187,13 @@ try {
             </div>
         </div>
         
-        <div class="mt-4 flex justify-end">
+        <div class="mt-4 flex justify-between">
+            <div class="flex space-x-2">
+                <button id="delete-all" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
+                    <i class="fas fa-trash mr-1"></i>
+                    Tüm Bildirimleri Sil
+                </button>
+            </div>
             <button id="mark-all-read" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
                 Tümünü Okundu İşaretle
             </button>
@@ -162,6 +202,180 @@ try {
 </div>
 
 <script>
+// Tek bildirim silme
+function deleteNotification(id, button) {
+    if (!confirm('Bu bildirimi silmek istediğinizden emin misiniz?')) {
+        return;
+    }
+    
+    fetch('ajax_notifications.php?action=delete&id=' + id, {
+        method: 'POST'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Bildirimi DOM'dan kaldır
+            const notificationElement = button.closest('[data-notification-id]');
+            notificationElement.remove();
+            
+            // Bildirim sayısını güncelle
+            updateNotificationCount(data.unread_count);
+            
+            // Seçili sayısını güncelle
+            updateSelectedCount();
+        } else {
+            alert('Bildirim silinirken hata oluştu: ' + (data.message || 'Bilinmeyen hata'));
+        }
+    })
+    .catch(error => {
+        console.error('Bildirim silinirken hata:', error);
+        alert('Bildirim silinirken hata oluştu');
+    });
+}
+
+// Çoklu bildirim silme
+function deleteSelectedNotifications() {
+    const selectedIds = getSelectedNotificationIds();
+    
+    if (selectedIds.length === 0) {
+        alert('Lütfen silinecek bildirimleri seçin');
+        return;
+    }
+    
+    if (!confirm(`${selectedIds.length} bildirimi silmek istediğinizden emin misiniz?`)) {
+        return;
+    }
+    
+    fetch('ajax_notifications.php?action=bulk_delete', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ids: selectedIds })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Seçili bildirimleri DOM'dan kaldır
+            selectedIds.forEach(id => {
+                const element = document.querySelector(`[data-notification-id="${id}"]`);
+                if (element) element.remove();
+            });
+            
+            // Bildirim sayısını güncelle
+            updateNotificationCount(data.unread_count);
+            
+            // Checkbox'ları sıfırla
+            resetCheckboxes();
+            
+            alert(`${data.deleted_count} bildirim başarıyla silindi`);
+        } else {
+            alert('Bildirimler silinirken hata oluştu: ' + (data.message || 'Bilinmeyen hata'));
+        }
+    })
+    .catch(error => {
+        console.error('Bildirimler silinirken hata:', error);
+        alert('Bildirimler silinirken hata oluştu');
+    });
+}
+
+// Tüm bildirimleri silme
+function deleteAllNotifications() {
+    if (!confirm('TÜM bildirimleri silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!')) {
+        return;
+    }
+    
+    fetch('ajax_notifications.php?action=delete_all', {
+        method: 'POST'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Sayfayı yenile
+            window.location.reload();
+        } else {
+            alert('Tüm bildirimler silinirken hata oluştu: ' + (data.message || 'Bilinmeyen hata'));
+        }
+    })
+    .catch(error => {
+        console.error('Tüm bildirimler silinirken hata:', error);
+        alert('Tüm bildirimler silinirken hata oluştu');
+    });
+}
+
+// Seçili bildirimleri okundu işaretleme
+function markSelectedAsRead() {
+    const selectedIds = getSelectedNotificationIds();
+    
+    if (selectedIds.length === 0) {
+        alert('Lütfen okundu işaretlenecek bildirimleri seçin');
+        return;
+    }
+    
+    fetch('ajax_notifications.php?action=bulk_mark_read', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ids: selectedIds })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Seçili bildirimlerin arkaplan rengini değiştir
+            selectedIds.forEach(id => {
+                const element = document.querySelector(`[data-notification-id="${id}"]`);
+                if (element) {
+                    element.classList.remove('bg-blue-50', 'dark:bg-gray-700');
+                    element.classList.add('bg-white', 'dark:bg-gray-800');
+                    
+                    // Okundu işaretle butonunu kaldır
+                    const readButton = element.querySelector('button[onclick^="markAsRead"]');
+                    if (readButton) readButton.remove();
+                }
+            });
+            
+            // Bildirim sayısını güncelle
+            updateNotificationCount(data.unread_count);
+            
+            // Checkbox'ları sıfırla
+            resetCheckboxes();
+            
+            alert(`${data.marked_count} bildirim okundu olarak işaretlendi`);
+        } else {
+            alert('Bildirimler okundu işaretlenirken hata oluştu: ' + (data.message || 'Bilinmeyen hata'));
+        }
+    })
+    .catch(error => {
+        console.error('Bildirimler okundu işaretlenirken hata:', error);
+        alert('Bildirimler okundu işaretlenirken hata oluştu');
+    });
+}
+
+// Yardımcı fonksiyonlar
+function getSelectedNotificationIds() {
+    const checkboxes = document.querySelectorAll('.notification-checkbox:checked');
+    return Array.from(checkboxes).map(cb => parseInt(cb.value));
+}
+
+function updateSelectedCount() {
+    const selectedCount = document.querySelectorAll('.notification-checkbox:checked').length;
+    document.getElementById('selected-count').textContent = `${selectedCount} seçili`;
+    
+    // Toplu işlem butonlarını etkinleştir/devre dışı bırak
+    const bulkButtons = document.querySelectorAll('#bulk-delete, #bulk-mark-read');
+    bulkButtons.forEach(button => {
+        button.disabled = selectedCount === 0;
+    });
+}
+
+function resetCheckboxes() {
+    document.querySelectorAll('.notification-checkbox, #select-all').forEach(cb => {
+        cb.checked = false;
+    });
+    updateSelectedCount();
+}
+
 function markAsRead(id, button) {
     fetch('ajax_notifications.php?action=mark_read&id=' + id)
         .then(response => response.json())
@@ -194,28 +408,72 @@ function updateNotificationCount(count) {
     }
 }
 
-document.getElementById('mark-all-read').addEventListener('click', function() {
-    fetch('ajax_notifications.php?action=mark_all_read')
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Tüm bildirimlerin arkaplan rengini değiştir
-                document.querySelectorAll('.bg-blue-50, .dark\\:bg-gray-700').forEach(el => {
-                    el.classList.remove('bg-blue-50', 'dark:bg-gray-700');
-                    el.classList.add('bg-white', 'dark:bg-gray-800');
-                });
-                
-                // Tüm okundu işaretle butonlarını kaldır
-                document.querySelectorAll('button[onclick^="markAsRead"]').forEach(el => el.remove());
-                
-                // Bildirim sayısını güncelle
-                updateNotificationCount(0);
-                
-                // Sayfayı yenile
-                window.location.reload();
+// Event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    // Tümünü seç checkbox
+    document.getElementById('select-all').addEventListener('change', function() {
+        const checkboxes = document.querySelectorAll('.notification-checkbox');
+        checkboxes.forEach(cb => {
+            cb.checked = this.checked;
+        });
+        updateSelectedCount();
+    });
+    
+    // Bireysel checkbox'lar
+    document.addEventListener('change', function(e) {
+        if (e.target.classList.contains('notification-checkbox')) {
+            updateSelectedCount();
+            
+            // Tümünü seç checkbox'ının durumunu güncelle
+            const allCheckboxes = document.querySelectorAll('.notification-checkbox');
+            const checkedCheckboxes = document.querySelectorAll('.notification-checkbox:checked');
+            const selectAllCheckbox = document.getElementById('select-all');
+            
+            if (checkedCheckboxes.length === 0) {
+                selectAllCheckbox.indeterminate = false;
+                selectAllCheckbox.checked = false;
+            } else if (checkedCheckboxes.length === allCheckboxes.length) {
+                selectAllCheckbox.indeterminate = false;
+                selectAllCheckbox.checked = true;
+            } else {
+                selectAllCheckbox.indeterminate = true;
             }
-        })
-        .catch(error => console.error('Tüm bildirimler okundu işaretlenirken hata:', error));
+        }
+    });
+    
+    // Toplu silme butonu
+    document.getElementById('bulk-delete').addEventListener('click', deleteSelectedNotifications);
+    
+    // Toplu okundu işaretle butonu
+    document.getElementById('bulk-mark-read').addEventListener('click', markSelectedAsRead);
+    
+    // Tüm bildirimleri sil butonu
+    document.getElementById('delete-all').addEventListener('click', deleteAllNotifications);
+    
+    // Tümünü okundu işaretle butonu
+    document.getElementById('mark-all-read').addEventListener('click', function() {
+        fetch('ajax_notifications.php?action=mark_all_read')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Tüm bildirimlerin arkaplan rengini değiştir
+                    document.querySelectorAll('.bg-blue-50, .dark\\:bg-gray-700').forEach(el => {
+                        el.classList.remove('bg-blue-50', 'dark:bg-gray-700');
+                        el.classList.add('bg-white', 'dark:bg-gray-800');
+                    });
+                    
+                    // Tüm okundu işaretle butonlarını kaldır
+                    document.querySelectorAll('button[onclick^="markAsRead"]').forEach(el => el.remove());
+                    
+                    // Bildirim sayısını güncelle
+                    updateNotificationCount(0);
+                    
+                    // Sayfayı yenile
+                    window.location.reload();
+                }
+            })
+            .catch(error => console.error('Tüm bildirimler okundu işaretlenirken hata:', error));
+    });
 });
 </script>
 

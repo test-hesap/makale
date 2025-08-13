@@ -1174,7 +1174,7 @@ if (isset($_SESSION['user_id'])) {
     ?>
       <nav class="bg-white dark:bg-[#292929] shadow-lg">
         <div class="max-w-7xl mx-auto px-4">
-            <div class="flex justify-between h-16">                <div class="flex">
+            <div class="flex justify-between h-19">                <div class="flex">
                     <div class="flex-shrink-0 flex items-center">
                         <a href="/" class="text-2xl font-bold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
                             <?php 
@@ -1185,14 +1185,14 @@ if (isset($_SESSION['user_id'])) {
                             
                             if (!empty($site_logo)) {
                                 // Koyu mod logosu var mı kontrol et
-                                echo '<img src="/' . $site_logo . '?v=' . time() . '" alt="' . htmlspecialchars($site_title) . '" class="h-8 mr-2 light-mode-logo">';
+                                echo '<img src="/' . $site_logo . '?v=' . time() . '" alt="' . htmlspecialchars($site_title) . '" class="h-12 mr-2 light-mode-logo">';
                                 
                                 // Koyu mod logosu varsa ekle, yoksa normal logoyu göster
                                 if (!empty($site_logo_dark)) {
-                                    echo '<img src="/' . $site_logo_dark . '?v=' . time() . '" alt="' . htmlspecialchars($site_title) . '" class="h-8 mr-2 dark-mode-logo hidden">';
+                                    echo '<img src="/' . $site_logo_dark . '?v=' . time() . '" alt="' . htmlspecialchars($site_title) . '" class="h-12 mr-2 dark-mode-logo hidden">';
                                 } else {
                                     // Koyu mod logosu yoksa normal logo da koyu modda gösterilir
-                                    echo '<img src="/' . $site_logo . '?v=' . time() . '" alt="' . htmlspecialchars($site_title) . '" class="h-8 mr-2 dark-mode-logo hidden">';
+                                    echo '<img src="/' . $site_logo . '?v=' . time() . '" alt="' . htmlspecialchars($site_title) . '" class="h-12 mr-2 dark-mode-logo hidden">';
                                 }
                                 
                                 // Logo varken başlık gösterilsin mi kontrolü

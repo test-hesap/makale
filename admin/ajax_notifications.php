@@ -132,6 +132,136 @@ try {
         }
         break;
         
+    case 'delete':
+        // Tek bildirim silme
+        $notification_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+        
+        if ($notification_id > 0) {
+            try {
+                $stmt = $db->prepare("DELETE FROM admin_notifications WHERE id = ?");
+                $success = $stmt->execute([$notification_id]);
+                
+                if ($success) {
+                    // Güncellenen okunmamış bildirim sayısını al
+                    $count = getUnreadNotificationsCount();
+                    echo json_encode([
+                        'success' => true,
+                        'unread_count' => $count
+                    ]);
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Bildirim silinemedi']);
+                }
+            } catch (Exception $e) {
+                error_log("Bildirim silme hatası: " . $e->getMessage());
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Bildirim silinirken bir hata oluştu',
+                    'error' => $e->getMessage()
+                ]);
+            }
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Geçersiz bildirim ID']);
+        }
+        break;
+        
+    case 'bulk_delete':
+        // Çoklu bildirim silme
+        $input = json_decode(file_get_contents('php://input'), true);
+        $ids = isset($input['ids']) ? array_map('intval', $input['ids']) : [];
+        
+        if (!empty($ids)) {
+            try {
+                $placeholders = str_repeat('?,', count($ids) - 1) . '?';
+                $stmt = $db->prepare("DELETE FROM admin_notifications WHERE id IN ($placeholders)");
+                $success = $stmt->execute($ids);
+                
+                if ($success) {
+                    $deleted_count = $stmt->rowCount();
+                    $count = getUnreadNotificationsCount();
+                    
+                    echo json_encode([
+                        'success' => true,
+                        'deleted_count' => $deleted_count,
+                        'unread_count' => $count
+                    ]);
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Bildirimler silinemedi']);
+                }
+            } catch (Exception $e) {
+                error_log("Toplu bildirim silme hatası: " . $e->getMessage());
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Bildirimler silinirken bir hata oluştu',
+                    'error' => $e->getMessage()
+                ]);
+            }
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Silinecek bildirim bulunamadı']);
+        }
+        break;
+        
+    case 'delete_all':
+        // Tüm bildirimleri silme
+        try {
+            $stmt = $db->prepare("DELETE FROM admin_notifications");
+            $success = $stmt->execute();
+            
+            if ($success) {
+                $deleted_count = $stmt->rowCount();
+                echo json_encode([
+                    'success' => true,
+                    'deleted_count' => $deleted_count,
+                    'unread_count' => 0
+                ]);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Tüm bildirimler silinemedi']);
+            }
+        } catch (Exception $e) {
+            error_log("Tüm bildirimleri silme hatası: " . $e->getMessage());
+            echo json_encode([
+                'success' => false,
+                'message' => 'Tüm bildirimler silinirken bir hata oluştu',
+                'error' => $e->getMessage()
+            ]);
+        }
+        break;
+        
+    case 'bulk_mark_read':
+        // Çoklu bildirim okundu işaretleme
+        $input = json_decode(file_get_contents('php://input'), true);
+        $ids = isset($input['ids']) ? array_map('intval', $input['ids']) : [];
+        
+        if (!empty($ids)) {
+            try {
+                $placeholders = str_repeat('?,', count($ids) - 1) . '?';
+                $stmt = $db->prepare("UPDATE admin_notifications SET is_read = 1 WHERE id IN ($placeholders)");
+                $success = $stmt->execute($ids);
+                
+                if ($success) {
+                    $marked_count = $stmt->rowCount();
+                    $count = getUnreadNotificationsCount();
+                    
+                    echo json_encode([
+                        'success' => true,
+                        'marked_count' => $marked_count,
+                        'unread_count' => $count
+                    ]);
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Bildirimler okundu işaretlenemedi']);
+                }
+            } catch (Exception $e) {
+                error_log("Toplu bildirim okundu işaretleme hatası: " . $e->getMessage());
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Bildirimler okundu işaretlenirken bir hata oluştu',
+                    'error' => $e->getMessage()
+                ]);
+            }
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Okundu işaretlenecek bildirim bulunamadı']);
+        }
+        break;
+    
     default:
         echo json_encode(['success' => false, 'message' => 'Geçersiz işlem']);
 }

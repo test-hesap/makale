@@ -614,6 +614,7 @@ $lang['admin_payments'] = 'Ödemeler';
 $lang['admin_refund_requests'] = 'İade Talepleri';
 $lang['admin_payment_methods'] = 'Ödeme Yöntemleri';
 $lang['admin_messages'] = 'Mesajlar';
+$lang['admin_notifications'] = 'Bildirimler';
 $lang['admin_site_management'] = 'Site Yönetimi';
 $lang['admin_settings'] = 'Ayarlar';
 $lang['admin_seo'] = 'SEO Yönetimi';

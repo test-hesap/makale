@@ -4,7 +4,7 @@ echo '<div class="header-ad-container" style="margin-bottom: 0.25rem;">' . showA
 ?>
 <nav class="bg-white dark:bg-[#292929] shadow-sm">
     <div class="max-w-7xl mx-auto px-4">
-        <div class="flex justify-between h-16">
+        <div class="flex justify-between h-19">
             <div class="flex">
                 <div class="flex-shrink-0 flex items-center">
                     <a href="/" class="text-2xl font-bold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">

@@ -202,6 +202,26 @@ error_log("Admin sidebar: Avatar dosyası - $avatar_path - " . (file_exists($ava
             ?>
         </a>
 
+        <!-- Bildirimler -->
+        <a href="all_notifications.php" class="flex items-center px-6 py-3 menu-item-stable menu-item-hover <?php echo $current_page === 'all_notifications' ? 'menu-item-active' : ''; ?>">
+            <i class="fas fa-bell mr-3"></i>
+            <?php echo t('admin_notifications'); ?>
+            <?php
+            // Okunmamış bildirim sayısını al
+            try {
+                $unread_notifications_query = $db->query("SELECT COUNT(*) FROM notifications WHERE is_read = 0");
+                if ($unread_notifications_query) {
+                    $unread_notifications_count = $unread_notifications_query->fetchColumn();
+                    if ($unread_notifications_count > 0) {
+                        echo '<span class="bg-orange-500 text-white text-xs font-bold rounded-full px-2 py-1 ml-1">' . $unread_notifications_count . '</span>';
+                    }
+                }
+            } catch (Exception $e) {
+                // Hata durumunda sessizce devam et
+            }
+            ?>
+        </a>
+
         <!-- Site Yönetimi -->
         <div class="mt-2">
             <button @click="siteOpen = !siteOpen" class="flex items-center justify-between w-full px-6 py-3 text-left menu-item-hover focus:outline-none menu-item-stable">

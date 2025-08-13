@@ -501,6 +501,7 @@ $lang = [
     'admin_subscriptions' => 'Subscriptions',
     'admin_premium_management' => 'Premium Management',
     'admin_messages' => 'Messages',
+    'admin_notifications' => 'Notifications',
     'admin_site_management' => 'Site Management',
     'admin_settings' => 'Settings',
     'admin_seo' => 'SEO Management',
