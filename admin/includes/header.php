@@ -128,6 +128,31 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         /* Alpine.js için x-cloak stilleri */
         [x-cloak] { display: none !important; }
         
+        /* AdSense Admin Panel Özel Stilleri */
+        .adsense-preview {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            padding: 15px;
+            color: white;
+            text-align: center;
+            margin: 10px 0;
+        }
+        
+        .adsense-status-active {
+            color: #10b981;
+            font-weight: 600;
+        }
+        
+        .adsense-status-inactive {
+            color: #ef4444;
+            font-weight: 600;
+        }
+        
+        .adsense-logo {
+            max-height: 32px;
+            margin-right: 12px;
+        }
+        
         /* Geçiş animasyonları */
         * {
             transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;

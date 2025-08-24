@@ -1147,6 +1147,26 @@ $lang['admin_mobile_sticky_ad'] = 'Mobil Sabit (Sticky) Alt Reklam';
 $lang['admin_mobile_sticky_description'] = 'Bu reklam sadece mobil cihazlarda ekranın en altında sabit (sticky) olarak görünecektir.';
 $lang['admin_current_status'] = 'Şu anki durum';
 
+// Google AdSense
+$lang['admin_adsense_settings'] = 'Google AdSense Ayarları';
+$lang['admin_adsense_publisher_id'] = 'Publisher ID (ca-pub-xxxxxxxxxxxxxxxx)';
+$lang['admin_adsense_publisher_id_placeholder'] = 'ca-pub-1234567890123456';
+$lang['admin_adsense_publisher_id_description'] = 'AdSense hesabınızdan Publisher ID\'nizi girin. Genellikle "ca-pub-" ile başlar.';
+$lang['admin_adsense_auto_ads'] = 'Auto Ads\'ı Etkinleştir';
+$lang['admin_adsense_auto_ads_description'] = 'Google\'ın otomatik olarak en iyi yerlere reklam yerleştirmesini sağlar.';
+$lang['admin_adsense_auto_ads_code'] = 'Auto Ads Kodu';
+$lang['admin_adsense_auto_ads_code_placeholder'] = '<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-xxxxxxxxxx" crossorigin="anonymous"></script>';
+$lang['admin_adsense_auto_ads_code_description'] = 'AdSense panelinden aldığınız Auto Ads kodunu buraya yapıştırın.';
+$lang['admin_adsense_status_active'] = 'AdSense Aktif: Publisher ID kayıtlı';
+$lang['admin_adsense_status_inactive'] = 'AdSense Yapılandırılmamış: Publisher ID giriniz';
+$lang['admin_adsense_auto_ads_enabled'] = '- Auto Ads etkin';
+$lang['admin_adsense_manual_ads'] = 'Manuel Reklam Blokları';
+$lang['admin_adsense_manual_ads_description'] = 'AdSense reklamlarını manuel olarak belirli yerlere yerleştirin.';
+$lang['admin_adsense_ad_unit_code'] = 'Reklam Birimi Kodu';
+$lang['admin_adsense_ad_unit_placeholder'] = '<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-xxxxxxxxxx" data-ad-slot="xxxxxxxxx"></ins>';
+$lang['admin_adsense_responsive_ads'] = 'Responsive Reklamlar';
+$lang['admin_adsense_responsive_ads_description'] = 'Reklamlar cihaza uygun olarak otomatik boyutlanır.';
+
 // Admin Bots
 $lang['admin_bot_visitors'] = 'Bot Ziyaretçileri';
 $lang['admin_bots_fetch_error'] = 'Botlar getirilirken hata';

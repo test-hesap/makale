@@ -1,0 +1,178 @@
+/**
+ * Google AdSense Styles
+ * Bu dosya AdSense reklamları için özel stiller içerir
+ */
+
+/* AdSense Genel Stiller */
+.adsense-ad {
+    margin: 15px 0;
+    text-align: center;
+    clear: both;
+}
+
+/* Header AdSense */
+.adsense-header {
+    margin: 10px 0 20px 0;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+/* Sidebar AdSense */
+.adsense-sidebar {
+    margin: 20px 0;
+    padding: 15px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: 1px solid #e9ecef;
+}
+
+/* Article AdSense */
+.adsense-article {
+    margin: 30px 0;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #007bff;
+}
+
+/* Mobile AdSense */
+.adsense-mobile {
+    margin: 15px 0;
+    padding: 10px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Dark Mode Desteği */
+.dark .adsense-header {
+    background: #374151;
+    border-color: #4b5563;
+}
+
+.dark .adsense-sidebar {
+    background: #1f2937;
+    border-color: #374151;
+}
+
+.dark .adsense-article {
+    background: #374151;
+    border-left-color: #3b82f6;
+}
+
+.dark .adsense-mobile {
+    background: #1f2937;
+}
+
+/* Responsive Tasarım */
+@media (max-width: 768px) {
+    .adsense-ad {
+        margin: 10px 0;
+    }
+    
+    .adsense-header,
+    .adsense-sidebar,
+    .adsense-article,
+    .adsense-mobile {
+        padding: 10px;
+        margin: 10px 0;
+    }
+}
+
+/* AdSense Responsive Wrapper */
+.adsense-responsive {
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.adsense-responsive ins {
+    display: block !important;
+    max-width: 100% !important;
+}
+
+/* AdSense Label (İsteğe bağlı) */
+.adsense-label {
+    font-size: 11px;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+.dark .adsense-label {
+    color: #9ca3af;
+}
+
+/* AdSense Loading Placeholder */
+.adsense-loading {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: adsense-loading 1.5s infinite;
+    border-radius: 4px;
+    height: 250px;
+}
+
+.dark .adsense-loading {
+    background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+    background-size: 200% 100%;
+}
+
+@keyframes adsense-loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* AdSense Banner Sizes */
+.adsense-banner-728x90 {
+    width: 728px;
+    height: 90px;
+    max-width: 100%;
+}
+
+.adsense-banner-300x250 {
+    width: 300px;
+    height: 250px;
+    max-width: 100%;
+}
+
+.adsense-banner-336x280 {
+    width: 336px;
+    height: 280px;
+    max-width: 100%;
+}
+
+.adsense-banner-320x50 {
+    width: 320px;
+    height: 50px;
+    max-width: 100%;
+}
+
+/* Auto Ads için özel stiller */
+.google-auto-placed {
+    margin: 20px 0 !important;
+}
+
+/* AdSense Container Animations */
+.adsense-fade-in {
+    opacity: 0;
+    animation: adsenseFadeIn 0.5s ease-in-out forwards;
+}
+
+@keyframes adsenseFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

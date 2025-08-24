@@ -67,6 +67,7 @@ if (isset($_SESSION['user_id'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/assets/css/seo.css">
     <link rel="stylesheet" href="/assets/css/sidebar.css">
+    <link rel="stylesheet" href="/assets/css/adsense.css">
     
     <?php
     // Favicon ekle
@@ -1144,6 +1145,15 @@ if (isset($_SESSION['user_id'])) {
             }
         });
     </script>
+    
+    <?php
+    // Google AdSense Auto Ads kodunu ekle
+    $adsense_auto_ads_code = getAdSenseAutoAdsCode();
+    if (!empty($adsense_auto_ads_code)) {
+        echo "\n    <!-- Google AdSense Auto Ads -->\n";
+        echo "    " . $adsense_auto_ads_code . "\n";
+    }
+    ?>
 </head>
 <body class="bg-gray-100 dark:bg-dark-bg dark-mode-transition">    <?php if (isLoggedIn()): 
         $stmt = $db->prepare("SELECT approved, can_post FROM users WHERE id = ?");

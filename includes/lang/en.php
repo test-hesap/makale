@@ -1019,6 +1019,26 @@ $lang = [
     'admin_mobile_sticky_description' => 'This ad will appear fixed (sticky) at the bottom of the screen only on mobile devices.',
     'admin_current_status' => 'Current status',
     
+    // Google AdSense
+    'admin_adsense_settings' => 'Google AdSense Settings',
+    'admin_adsense_publisher_id' => 'Publisher ID (ca-pub-xxxxxxxxxxxxxxxx)',
+    'admin_adsense_publisher_id_placeholder' => 'ca-pub-1234567890123456',
+    'admin_adsense_publisher_id_description' => 'Enter your Publisher ID from your AdSense account. It usually starts with "ca-pub-".',
+    'admin_adsense_auto_ads' => 'Enable Auto Ads',
+    'admin_adsense_auto_ads_description' => 'Let Google automatically place ads in the best locations.',
+    'admin_adsense_auto_ads_code' => 'Auto Ads Code',
+    'admin_adsense_auto_ads_code_placeholder' => '<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-xxxxxxxxxx" crossorigin="anonymous"></script>',
+    'admin_adsense_auto_ads_code_description' => 'Paste the Auto Ads code you got from your AdSense panel here.',
+    'admin_adsense_status_active' => 'AdSense Active: Publisher ID registered',
+    'admin_adsense_status_inactive' => 'AdSense Not Configured: Enter Publisher ID',
+    'admin_adsense_auto_ads_enabled' => '- Auto Ads enabled',
+    'admin_adsense_manual_ads' => 'Manual Ad Blocks',
+    'admin_adsense_manual_ads_description' => 'Manually place AdSense ads in specific locations.',
+    'admin_adsense_ad_unit_code' => 'Ad Unit Code',
+    'admin_adsense_ad_unit_placeholder' => '<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-xxxxxxxxxx" data-ad-slot="xxxxxxxxx"></ins>',
+    'admin_adsense_responsive_ads' => 'Responsive Ads',
+    'admin_adsense_responsive_ads_description' => 'Ads will automatically resize according to the device.',
+    
     // Admin Bots
     'admin_bot_visitors' => 'Bot Visitors',
     'admin_bots_fetch_error' => 'Error fetching bots',

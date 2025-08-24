@@ -422,3 +422,97 @@ if (!function_exists('showAd')) {
         return $ad_content;
     }
 } // function_exists kontrolünün kapatması
+
+/**
+ * Google AdSense Auto Ads kodunu döndürür
+ * Header bölümüne eklenmek için kullanılır
+ */
+function getAdSenseAutoAdsCode() {
+    // AdSense Auto Ads etkin mi kontrol et
+    $auto_ads_enabled = getSetting('adsense_auto_ads');
+    
+    if ($auto_ads_enabled == '1') {
+        $auto_ads_code = getSetting('adsense_auto_ads_code');
+        
+        if (!empty($auto_ads_code)) {
+            return $auto_ads_code;
+        }
+    }
+    
+    return '';
+}
+
+/**
+ * AdSense durum bilgilerini döndürür
+ */
+function getAdSenseStatus() {
+    $publisher_id = getSetting('adsense_publisher_id');
+    $auto_ads = getSetting('adsense_auto_ads');
+    
+    return [
+        'publisher_id' => $publisher_id,
+        'auto_ads_enabled' => $auto_ads == '1',
+        'is_configured' => !empty($publisher_id)
+    ];
+}
+
+/**
+ * AdSense reklam birimi kodu üretir
+ */
+function getAdSenseAdUnit($slot_id, $width = 'auto', $height = 'auto', $format = 'auto') {
+    $publisher_id = getSetting('adsense_publisher_id');
+    
+    if (empty($publisher_id) || empty($slot_id)) {
+        return '';
+    }
+    
+    $style = "display:block";
+    if ($width !== 'auto' && $height !== 'auto') {
+        $style = "display:inline-block;width:{$width}px;height:{$height}px";
+    }
+    
+    return '
+    <ins class="adsbygoogle"
+         style="' . $style . '"
+         data-ad-client="' . htmlspecialchars($publisher_id) . '"
+         data-ad-slot="' . htmlspecialchars($slot_id) . '"
+         data-ad-format="' . htmlspecialchars($format) . '"
+         data-full-width-responsive="true"></ins>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>';
+}
+
+/**
+ * AdSense manuel reklamlarını konuma göre döndürür
+ */
+function showAdSenseAd($position) {
+    // Admin veya premium kullanıcılara reklam gösterme
+    if ((function_exists('isAdmin') && isAdmin()) || 
+        (function_exists('isPremium') && isPremium())) {
+        return '';
+    }
+    
+    $ad_code = '';
+    
+    switch ($position) {
+        case 'header':
+            $ad_code = getSetting('adsense_header_ad');
+            break;
+        case 'sidebar':
+            $ad_code = getSetting('adsense_sidebar_ad');
+            break;
+        case 'article':
+            $ad_code = getSetting('adsense_article_ad');
+            break;
+        case 'mobile':
+            $ad_code = getSetting('adsense_mobile_ad');
+            break;
+    }
+    
+    if (!empty($ad_code)) {
+        return '<div class="adsense-ad adsense-' . $position . '">' . $ad_code . '</div>';
+    }
+    
+    return '';
+}
